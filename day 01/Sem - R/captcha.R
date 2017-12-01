@@ -2,4 +2,10 @@ captcha <- "95148459654114155731698478149499917967976774762713244751317162642456
 
 d <- as.numeric(strsplit(captcha, split = "")[[1]])
 
-res <- sum(d[!diff(c(d, d[1]))])
+# Part One
+res_part1 <- sum(d[!diff(c(d, d[1]))])
+
+# Part Two
+n <- length(d)
+
+res_part2 <- sum(d[!(d - d[(0:(n - 1) + n / 2) %% n + 1])])
