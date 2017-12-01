@@ -1,8 +1,7 @@
-#r @"C:\Users\Jo.VanEyck\source\repos\aedvent-code-2017\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
+#r @"..\..\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
 open Swensen.Unquote
 
 //pt1
-
 let solve (input : int list) =
     let first = input |> List.head
 
@@ -14,7 +13,7 @@ let solve (input : int list) =
 
 let parse input =
     input 
-    |> Seq.map (fun digit -> System.Int32.Parse <| string digit) 
+    |> Seq.map (string >> System.Int32.Parse)
     |> Seq.toList
 
 //pt2  
