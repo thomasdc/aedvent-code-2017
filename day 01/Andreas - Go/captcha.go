@@ -33,7 +33,7 @@ var puzzleInput = "3181317434923597215981186975516634388295837647427843768163249
 
 func main(){
 
-	//samples
+	//part 1
 	for _, s := range inputs1 {
 		fmt.Print(s, " => ")
 		fmt.Println(Captcha(s.in, 1))
@@ -43,7 +43,7 @@ func main(){
 	fmt.Println(Captcha(puzzleInput, 1))
 
 
-	//
+	//part 2
 	for _, s := range inputs2 {
 		fmt.Print(s, " => ")
 		fmt.Println(Captcha(s.in, len(s.in)/2))
@@ -57,19 +57,14 @@ func main(){
 
 func Captcha(s string, spacings int) int{
 
-	res := ""
+	nbr := 0
 	for i, c := range s {
 
-		if c == rune(s[ (i+spacings) % len(s)]) {
-			res += string(c)
+		if c == rune(s[ (i+spacings)%len(s) ]) {
+			n, _ := strconv.Atoi( string(c) )
+			nbr += n
 		}
 
-	}
-
-	nbr := 0
-	for _, c := range res {
-		n, _ := strconv.Atoi( string(c) )
-		nbr += n
 	}
 
 	return nbr
