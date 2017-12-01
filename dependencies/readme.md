@@ -1,0 +1,1 @@
+A home for all the cruft you might need for multiple puzzles but only want to set up once (maven deps, nuget packages, paket references,...)
