@@ -8,7 +8,7 @@ Advent of Code is a series of small programming puzzles for a variety of skill l
 
 # AE Leaderboard
 
-Instructions coming soon
+Here's our private leaderboard: http://adventofcode.com/2017/leaderboard/private/view/29328. The code can be found in the #aedvent slack channel.
 
 # Folder Structure
 
