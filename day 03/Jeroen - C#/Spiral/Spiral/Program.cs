@@ -1,16 +1,25 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using static Spiral.Spiral;
 
 namespace Spiral
 {
     class Program
     {
+        private const int Input = 265149;
+
         static void Main(string[] args)
         {
-            Console.WriteLine(Spiral.DistanceToOrigin(265149));
-            var solution = Spiral.SpiralValues().SkipWhile(i => i.value <= 265149).First();
-            Console.WriteLine(solution);
+            Run(() => DistanceToOrigin(Input));
+            Run(() => SpiralValues().SkipWhile(i => i.value <= Input).First().value);
+        }
 
+        static void Run<T>(Func<T> f)
+        {
+            var sw = Stopwatch.StartNew();
+            var result = f();
+            Console.WriteLine($"{result} - {sw.Elapsed}");
         }
     }
 }

@@ -17,22 +17,28 @@ namespace Spiral
         public static IEnumerable<(int square, (int x, int y), int value)> SpiralValues()
         {
             var values = new Dictionary<(int, int), int> { [(0, 0)] = 1 };
+
+            int[] neighbours = { -1, 0, 1 };
+
+            int GetAndStoreValue(int x, int y) => values[(x, y)] = (
+                    from i in neighbours from j in neighbours where i != 0 || j != 0
+                    let coordinate = (x + i, y + j)
+                    select values.ContainsKey(coordinate) ? values[coordinate] : 0
+                ).Sum();
+
             return new[] { (1, (0, 0), 1) }.Concat(
                 from i in InfiniteSequence().Skip(1)
                 let square = i + 1
                 let coordinate = ToEuclidean(square)
-                let value = GetAndStoreValue(coordinate)
-                select (square, coordinate, value));
-
-            int GetAndStoreValue((int x, int y) coordinate)
-                => values[coordinate] = Neighbours(coordinate)
-                    .Select(c => values.ContainsKey(c) ? values[c] : 0)
-                    .Sum();
+                let value = GetAndStoreValue(coordinate.x, coordinate.y)
+                select (square, coordinate, value)
+                );
         }
+
 
         // given the square position, calculates the (x,y) coordinate
         // inspired by https://stackoverflow.com/a/3715915
-        public static (int x, int y) ToEuclidean(int square)
+        internal static (int x, int y) ToEuclidean(int square)
         {
             var i = square - 1;
             var j = Round(Sqrt(i));
@@ -41,22 +47,9 @@ namespace Spiral
             return (F(k), F(-k));
         }
 
-        static IEnumerable<(int, int)> Neighbours((int x, int y) c)
-            => new[]
-            {
-                (c.x - 1, c.y - 1),
-                (c.x, c.y - 1),
-                (c.x + 1, c.y - 1),
-                (c.x + 1, c.y),
-                (c.x + 1, c.y + 1),
-                (c.x, c.y + 1),
-                (c.x - 1, c.y + 1),
-                (c.x - 1, c.y)
-            };
-
         static IEnumerable<int> InfiniteSequence()
         {
-            for (int i = 0; i < int.MaxValue; i++) yield return i;
+            for (var i = 0; i < int.MaxValue; i++) yield return i;
         }
     }
 }
