@@ -1,14 +1,16 @@
 # aedvent-code-2017
 AE Advent of Code 2017
 
-This repository contains code submissions by AE employees for Advent of Code 2017 (Which will commence in December)
-http://adventofcode.com
+This repository contains code submissions by AE employees for Advent of Code 2017
+http://adventofcode.com/2017
 
 Advent of Code is a series of small programming puzzles for a variety of skill levels. They are self-contained and are just as appropriate for an expert who wants to stay sharp as they are for a beginner who is just learning to code. Each puzzle calls upon different skills and has two parts that build on a theme.
 
 # AE Leaderboard
 
-Here's our private leaderboard: http://adventofcode.com/2017/leaderboard/private/view/29328. The code can be found in the #aedvent slack channel.
+To join the AE Leaderboard, check the Slack channel for the join code.
+
+AE Leaderboard: http://adventofcode.com/2016/leaderboard/private/view/29328
 
 # Folder Structure
 
