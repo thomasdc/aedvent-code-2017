@@ -47,10 +47,8 @@ func part2(numbers [][] int) {
 func lineChecksum2(l []int) int {
 	for _, n := range l {
 		for _, x := range l {
-			if n != x {
-				if (n/x)*x == n {
-					return n/x
-				}
+			if n != x && (n/x)*x == n {
+				return n/x
 			}
 		}
 	}
