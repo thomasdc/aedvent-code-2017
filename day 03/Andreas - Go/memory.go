@@ -34,7 +34,7 @@ func spiral(v int)int{
 	fmt.Println("\tring:", ring, "which contains values between", min, "and", max)
 
 	//distance => moves to quandrant center + ring
-	distOffset := QuadrantCenterOffset(v, min, max)
+	distOffset := quadrantCenterOffset(v, min, max)
 	fmt.Println("\tdist =>", distOffset, "+" ,ring, " => ", distOffset+ring)
 
 	return distOffset + ring
@@ -59,7 +59,7 @@ func ringMax(r int) int{
 	return rMax * rMax
 }
 
-func QuadrantCenterOffset(v, rMin, rMax int) int{
+func quadrantCenterOffset(v, rMin, rMax int) int{
 
 	//size of each edge
 	edgeSize := (rMax - rMin) / 4 +1
