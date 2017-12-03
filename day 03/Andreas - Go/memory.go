@@ -1,7 +1,6 @@
 package main
 
 import (
-//	"math"
 	"fmt"
 )
 
@@ -70,12 +69,6 @@ func quadrantCenterOffset(v, rMin, rMax int) int{
 	//center of side if halway the side !
 	centerOffset := edgeSize/2
 	sideCenter := (side+side+1)* centerOffset + rMin-1
-
-/*	//quadrant
-	quadrant := side
-	if v < sideCenter { quadrant-- } //down side of edge !
-	if quadrant < 0 { quadrant+= 4 }// -1 => is quadrant 3
-*/
 
 	res := sideCenter - v
 	if res < 0 { res = -res }
