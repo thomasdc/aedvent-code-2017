@@ -10,7 +10,7 @@ Advent of Code is a series of small programming puzzles for a variety of skill l
 
 To join the AE Leaderboard, check the Slack channel for the join code.
 
-AE Leaderboard: http://adventofcode.com/2016/leaderboard/private/view/29328
+AE Leaderboard: http://adventofcode.com/2017/leaderboard/private/view/29328
 
 # Folder Structure
 
