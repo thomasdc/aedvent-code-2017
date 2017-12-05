@@ -12,28 +12,8 @@ def read_input(path):
     with open(path, "r") as a:
         return list(map(int, [line.strip() for line in a]))
 
-lenin = read_input("day 05/Oliver - Python/input.txt")
-
-
-lenin = [0, 3, 0, 1, -3]
-# Part one
-def lenin_steps(input):
-    # initialise
-    increment_position = 0
-    value_forward = 0
-    step = 0
-    # get position where to increment
-    while increment_position < len(input):
-        step +=1
-        # increment_position += value_forward
-        value_forward = input[increment_position]
-        input[increment_position]+= 1
-        increment_position += value_forward
-    print(step)
-
-lenin_steps(lenin)
-
 # After each jump, if the offset was three or more, instead decrease it by 1. Otherwise, increase it by 1 as before.
+
 def lenin_steps_two(input):
     # initialise
     increment_position = 0
@@ -52,5 +32,5 @@ def lenin_steps_two(input):
     print(step)
 
 # lenin = [0, 3, 0, 1, -3]
-
+lenin = read_input("day 05/Oliver - Python/input.txt")
 lenin_steps_two(lenin)
