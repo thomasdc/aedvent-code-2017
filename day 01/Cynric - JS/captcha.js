@@ -1,0 +1,1 @@
+function day1(val) { var result = 0; for (var v in val) { if (val[parseInt(v)%val.length] === val[(parseInt(v)+1)%val.length]) /* #1 */ /* if (val[parseInt(v)%val.length] === val[(parseInt(v)+1)%val.length]) #2 */ result += parseInt(val[parseInt(v)%val.length]);} console.log(result);}
