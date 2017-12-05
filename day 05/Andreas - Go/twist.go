@@ -8,12 +8,24 @@ import (
 
 func main(){
 	in1 := []int{0,3,0,1,-3}
+	in2 := parseInput(input)
+
+/*	
 	fmt.Println( doStep(&in1, 0, 0) )
 	fmt.Println()
-		
-	in2 := parseInput(input)
 	fmt.Println( doStep(in2, 0, 0) )
 	fmt.Println()
+*/
+
+	//IN PLACE!! don't run both at same time !
+
+	fmt.Println( doStep2(&in1, 0, 0) )
+	fmt.Println()
+
+	fmt.Println( doStep2(in2, 0, 0) )
+	fmt.Println()
+
+
 }
 
 
@@ -33,6 +45,30 @@ func doStep(ptr *[]int, pos int, ctr int)int {
 	if pos < len(input) {
 		input[pos]++
 		return doStep(ptr, newPos, ctr+1)
+	}
+
+	return ctr
+}
+
+func doStep2(ptr *[]int, pos int, ctr int)int {
+	input := *ptr
+
+	for pos < len(input){
+
+		//if ctr == 25 { panic(nil) } //debug
+
+		newPos := pos + input[pos]
+		
+		if input[pos] >= 3 {
+			input[pos]--
+		} else {
+			input[pos]++
+		}
+
+		pos = newPos
+		ctr++
+
+		//fmt.Println(pos, input, ctr) //debug
 	}
 
 	return ctr

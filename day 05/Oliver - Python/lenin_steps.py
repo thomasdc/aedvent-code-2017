@@ -17,14 +17,13 @@ def read_input(path):
 def lenin_steps_two(input):
     # initialise
     increment_position = 0
-    value_forward = 0
     step = 0
     # get position where to increment
     while increment_position < len(input):
-        step +=1
+        step += 1
         # increment_position += value_forward
         value_forward = input[increment_position]
-        if value_forward >=3:
+        if value_forward >= 3:
             input[increment_position] -= 1
         else:
             input[increment_position] += 1
