@@ -1,5 +1,5 @@
 # part 1
-tiles <- read.table(file = "input.txt")[[1]]
+trampolines <- read.table(file = "input.txt")[[1]]
 
 position <- 1
 
@@ -7,9 +7,9 @@ steps <- 0
 
 repeat {
   
-  jump <- tiles[position]
+  jump <- trampolines[position]
   
-  tiles[position] <- tiles[position] + 1
+  trampolines[position] <- trampolines[position] + 1
   
   if (jump != 0) {
     position <- position + jump
@@ -17,7 +17,7 @@ repeat {
 
   steps <- steps + 1
   
-  if (position < 1 | position > length(tiles)) {
+  if (position < 1 | position > length(trampolines)) {
     break
   }
   
@@ -26,7 +26,7 @@ repeat {
 print(steps)
 
 # part 2
-tiles <- read.table(file = "input.txt")[[1]]
+trampolines <- read.table(file = "input.txt")[[1]]
 
 position <- 1
 
@@ -34,12 +34,12 @@ steps <- 0
 
 repeat {
   
-  jump <- tiles[position]
+  jump <- trampolines[position]
   
   if (jump >= 3) {
-    tiles[position] <- tiles[position] - 1
+    trampolines[position] <- trampolines[position] - 1
   } else {
-    tiles[position] <- tiles[position] + 1
+    trampolines[position] <- trampolines[position] + 1
   }
   
   if (jump != 0) {
@@ -48,7 +48,7 @@ repeat {
   
   steps <- steps + 1
   
-  if (position < 1 | position > length(tiles)) {
+  if (position < 1 | position > length(trampolines)) {
     break
   }
   
