@@ -14,12 +14,10 @@ Under this new system policy, how many passphrases are valid?
 
 """
 import itertools
-
 def read_input(path):
     with open(path, "r") as a:
         return [line.split() for line in a]
 
-passphrases = read_input("day 04/Oliver - Python/input.txt")
 
 def compare(phrases):
     result = []
@@ -35,6 +33,7 @@ test = read_input("day 04/Oliver - Python/test.txt")
 compare(test)
 
 # On input.txt
+passphrases = read_input("day 04/Oliver - Python/input.txt")
 result = compare(passphrases)
 len(result)
 # Valid results
