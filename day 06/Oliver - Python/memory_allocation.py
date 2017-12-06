@@ -11,7 +11,7 @@ def distribute(block_input):
     return block_input
 
 
-def block_rotate(block):
+def blockchain(block):
     block_result = []
     block_steps = 0
     new = True
@@ -28,4 +28,4 @@ def block_rotate(block):
 # block = [0, 2, 7 , 0]
 # block_rotate(block)
 block = [0,	5,	10,	0,	11,	14,	13,	4,	11,	8,	8,	7,	1,	4,	12,	11]
-block_rotate(block)
+blockchain(block)
