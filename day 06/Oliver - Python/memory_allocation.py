@@ -17,13 +17,13 @@ def block_rotate(block):
     new = True
     while new:
         block = distribute(block)
-        block_result.append(list(block))
-        if block not in block_result[:-1]:
+        if block not in block_result:
+            block_result.append(list(block))
             new = True
             block_steps +=1
         else:
             new = False
-    print(block_steps, (len(block_result) - min((i) for i, v in enumerate(block_result) if v == block))-1)
+    print(block_steps, (len(block_result) - block_result.index(block)))
 
 # block = [0, 2, 7 , 0]
 # block_rotate(block)
