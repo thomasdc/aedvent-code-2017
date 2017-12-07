@@ -23,12 +23,10 @@ cntj (57)
 ";
 
         [Fact]
-        public void Test1()
+        public void TestPart1()
         {
             var tree = Tree.Parse(SampleInput);
-
             var root = tree.Root;
-
             Assert.Equal("tknk", root.Label);
         }
 
@@ -36,19 +34,32 @@ cntj (57)
         [InlineData("ugml", 251)]
         [InlineData("gyxo", 61)]
         [InlineData("padx", 243)]
-        public void Test2(string label, int expectedWeight)
+        public void TestPart2_Weights(string label, int expectedWeight)
         {
             var tree = Tree.Parse(SampleInput);
-            var node = tree.Find(n => n.Label == label);
+            var node = tree.Find(label);
             Assert.Equal(expectedWeight, node.Weight);
         }
 
         [Fact]
-        public void Test()
+        public void TestPart2()
         {
             var tree = Tree.Parse(SampleInput);
-            var invalid = tree.Root.Traverse().Where(n => n.Children.Any(c => !c.HasValidWeight));
-            
+
+            var invalidNode = (
+                from n in tree.AllNodes()
+                where !n.HasValidWeight && n.Children.All(x => x.HasValidWeight)
+                from child in n.Children
+                group child by child.Weight into g
+                where g.Count() == 1
+                select g.Single()
+            ).SingleOrDefault();
+
+            var sibling = invalidNode.Siblings.First();
+            var difference = invalidNode.Weight - sibling.Weight;
+            var result = invalidNode.PrivateWeight - difference;
+            Assert.Equal("ugml", invalidNode.Label);
+            Assert.Equal(60, result);
         }
     }
 

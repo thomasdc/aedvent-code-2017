@@ -36,10 +36,7 @@ namespace ProgramTree
 
         public Tree(IEnumerable<(string label, int weight)> nodes, IEnumerable<(string parent, string child)> edges)
         {
-            Nodes = nodes
-                .Select(i => new Node(i.label, i.weight))
-                .ToDictionary(n => n.Label);
-
+            Nodes = nodes.Select(i => new Node(i.label, i.weight)).ToDictionary(n => n.Label);
 
             foreach (var edge in edges)
             {
@@ -51,13 +48,17 @@ namespace ProgramTree
         }
 
         private Dictionary<string, Node> Nodes { get; }
-        public Node Root => Nodes.Single(n => n.Value.Parent == null).Value;
+
+        private Node _root;
+        public Node Root => _root ?? (_root = Nodes.Single(n => n.Value.Parent == null).Value);
 
         public Node Find(Func<Node, bool> predicate)
         {
-            return Root.Traverse().FirstOrDefault(predicate);
+            return AllNodes().FirstOrDefault(predicate);
         }
+        public Node Find(string label) => Nodes[label];
 
+        public IEnumerable<Node> AllNodes() => Nodes.Values;
     };
     class Node
     {
@@ -66,18 +67,9 @@ namespace ProgramTree
         public Node Parent => _parent;
         private readonly List<Node> _children = new List<Node>();
 
-        public int Weight
-        {
-            get
-            {
-                return Traverse().Select(n => n._weight).Sum();
-            }
-        }
+        public int Weight => Traverse().Select(n => n._weight).Sum();
 
-        public override string ToString()
-        {
-            return $"{Label} ({Weight})";
-        }
+        public override string ToString() => $"{Label} ({Weight})";
 
         public bool HasValidWeight => !Children.Any() || Children.Select(c => c.Weight).Distinct().Count() == 1;
 
@@ -88,19 +80,13 @@ namespace ProgramTree
             _weight = weight;
         }
 
-        public void AddChild(Node child)
-        {
-            _children.Add(child);
-        }
+        public void AddChild(Node child) => _children.Add(child);
 
         public IReadOnlyCollection<Node> Children => _children;
         public int PrivateWeight => _weight;
         public IEnumerable<Node> Siblings => Parent.Children.Where(n => n.Label != Label);
 
-        public void SetParent(Node parent)
-        {
-            _parent = parent;
-        }
+        public void SetParent(Node parent) => _parent = parent;
 
         public IEnumerable<Node> Traverse()
         {
