@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Spiral
 {
@@ -11,51 +13,49 @@ namespace Spiral
 
         public static int Part1(int input)
         {
+            return Cells().Skip(input-1).Select(_ => Math.Abs(_.column) + Math.Abs(_.row)).First();
+        }
+
+        private static IEnumerable<(int row, int column)> Cells()
+        {
             var column = 0;
             var row = 0;
             var depth = 0;
-            for (var counter = 1; counter < input; counter++)
-            {
-                (depth, row, column) = Next(depth, row, column);
-            }
             
-            return Math.Abs(column) + Math.Abs(row);
-        }
+            yield return (row, column);
+            
+            while (true)
+            {
+                if (row == -depth) // bottom row
+                {
+                    if (column == depth) // right corner
+                    {
+                        depth++;
+                    }
+                    column++;
+                }
+                else if (row == depth) // top row
+                {
+                    if (column == -depth) // left corner
+                    {
+                        row--;
+                    }
+                    else
+                    {
+                        column--;
+                    }
+                }
+                else if (column == depth) // right middle
+                {
+                    row++;
+                }
+                else // left middle
+                {
+                    row--;
+                }
 
-        public static (int nextDepth, int nextRow, int nextColumn) Next(int depth, int row, int column)
-        {
-            var nextDepth = depth;
-            var nextRow = row;
-            var nextColumn = column;
-            if (row == -depth) // bottom row
-            {
-                nextColumn++;
-                if (column == depth) // right corner
-                {
-                    nextDepth++;
-                }
+                yield return (row, column);
             }
-            else if (row == depth) // top row
-            {
-                if (column == -depth) // left corner
-                {
-                    nextRow--;
-                }
-                else
-                {
-                    nextColumn--;
-                }
-            }
-            else if (column == depth) // right middle
-            {
-                nextRow++;
-            }
-            else // left middle
-            {
-                nextRow--;
-            }
-
-            return (nextDepth, nextRow, nextColumn);
         }
     }
 }
