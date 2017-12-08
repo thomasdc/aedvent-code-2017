@@ -1,6 +1,8 @@
 #r @"..\..\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
 open Swensen.Unquote
 
+let mutable maximum = System.Int32.MinValue //forgive me, FP gods
+
 type Register = string
 type Value = int
 type Action = Inc | Dec
@@ -70,6 +72,10 @@ let apply registers instruction =
         match instruction.action with
         | Inc -> oldValue + instruction.value
         | Dec -> oldValue - instruction.value
+
+    if newValue > maximum then
+        maximum <- newValue
+
     registers |> Map.add instruction.register newValue
 
 let runInstruction registers instruction = 
@@ -105,4 +111,5 @@ printfn "..done!"
 //Acceptance test
 test <@ 1 = (example |> parse |> run |> max |> snd) @>
 
-let input = System.IO.File.ReadAllText(__SOURCE_DIRECTORY__+"\input.txt")
+let input = System.IO.File.ReadAllText(__SOURCE_DIRECTORY__ + "\input.txt")
+input |> parse |> run |> max
