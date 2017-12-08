@@ -39,7 +39,8 @@ let parse input =
 //build tower
 //bottom?
 
-let buildAboveMap programs = 
+type AboveMap = (Program * string) seq
+let buildAboveMap programs : AboveMap = 
     programs
     |> Seq.collect (fun p -> p.immediatelyAbove |> Seq.map (fun aboveName -> (p, aboveName)))
 
@@ -59,6 +60,18 @@ let solve input =
 
 let input = System.IO.File.ReadAllLines(__SOURCE_DIRECTORY__ + "\input.txt")
 solve input
+
+type Tower = { name : string; directlyAbove : Tower list}
+let buildTree rootName (map : AboveMap) =
+    let rec buildRec rootName =
+        let aboves = map |> Seq.filter (fun (bel, abo) -> bel.name = rootName) |> Seq.map snd
+        { name = rootName; directlyAbove = aboves |> Seq.map buildRec}
+    
+    buildRec rootName
+
+let map = input |> parse |> buildAboveMap
+let root = "vtzay"//findRoot map
+buildTree root map
 
 printf "Testing..."
 test <@ parseLine "test (33)" = {name = "test"; weight = 33; immediatelyAbove = [] } @>
