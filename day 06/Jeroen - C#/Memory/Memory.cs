@@ -31,50 +31,12 @@ namespace Memory
             };
 
         }
-        public static (int steps, int loopSize) MutableCycles(ImmutableArray<byte> input)
-        {
-            var list = new List<ImmutableArray<byte>>();
-            int steps = 0;
-            var cycle = input;
-            int max = 0;
-            while (true)
-            {
-                var m = cycle.FindMax();
-                if (m.value > max) max = m.value;
-                steps++;
-                cycle = DoOneCycle(cycle);
-                var index = list.FindIndex(x => x.SequenceEqual(cycle));
-                if (index >= 0)
-                {
-                    Console.WriteLine(max);
-                    return (steps, list.Count - index);
-                }
-
-                list.Add(cycle);
-            };
-        }
 
         public static (int index, int value) FindMax(this IEnumerable<byte> input) =>
             input
                 .Select((value, index) => (index: index, value: value))
                 .Aggregate((index: -1, value: int.MinValue), (x, y) => y.value > x.value ? y : x);
 
-        static void DoOneCycle(byte[] input)
-        {
-            var max = input.FindMax();
-            var length = input.Length;
-            var quotient = max.value / length;
-            var remainder = max.value % length;
-            for (int i = 0; i < input.Length; i++)
-            {
-                var value = input[i];
-                var j = (i + length - max.index - 1) % length;
-                var term1 = i == max.index ? 0 : value;
-                var term2 = quotient;
-                var term3 = j < remainder ? 1 : 0;
-                input[i] = (byte)(term1 + term2 + term3);
-            }
-        }
         public static ImmutableArray<byte> DoOneCycle(ImmutableArray<byte> input)
         {
             var max = input.FindMax();

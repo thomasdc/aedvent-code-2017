@@ -70,5 +70,5 @@ let sizeOfLoop banks =
     let lastIndex = (redistributions |> List.length) - 1
     let firstIndex = redistributions |> List.findIndex (fun el -> el = last)
     lastIndex - firstIndex
-
+sizeOfLoop input
 test <@ sizeOfLoop [0;2;7;0] = 4 @>
