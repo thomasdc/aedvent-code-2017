@@ -30,13 +30,13 @@ func ParseNumbers(lines []string) []int {
 	return parsed
 }
 
-func Run(o Offsetter, offsets []int) int {
+func Run(offsetter func(int) int, offsets []int) int {
 	steps := 0
 	location := 0
 	for {
 		steps++
 		offset := offsets[location]
-		offsets[location] = o.Offset(offset)
+		offsets[location] = offsetter(offset)
 		location += offset
 
 		if location < 0 || location >= len(offsets) {
@@ -46,29 +46,19 @@ func Run(o Offsetter, offsets []int) int {
 }
 
 func PartOne(input []int) int {
-	return Run(Part1Offsetter{}, input)
+	offsetter := func(o int) int { return o + 1 }
+	return Run(offsetter, input)
 }
 
 func PartTwo(input []int) int {
-	return Run(Part2Offsetter{}, input)
-}
-
-type Offsetter interface {
-	Offset(o int) int
-}
-type Part1Offsetter struct{}
-
-func (Part1Offsetter) Offset(o int) int {
-	return o + 1
-}
-
-type Part2Offsetter struct{}
-
-func (Part2Offsetter) Offset(o int) int {
-	if o >= 3 {
-		return o - 1
+	offsetter := func(o int) int {
+		if o >= 3 {
+			return o - 1
+		}
+		return o + 1
 	}
-	return o + 1
+
+	return Run(offsetter, input)
 }
 
 func TestPartOneExample(t *testing.T) {
