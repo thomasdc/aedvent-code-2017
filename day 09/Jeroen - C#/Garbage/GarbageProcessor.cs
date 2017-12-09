@@ -60,15 +60,12 @@ namespace Garbage
                 case '>':
                     _process = Counting;
                     return state;
+                default:
+                    return state.Garbage();
             }
-            return state.Garbage();
         }
 
-        public State Process(string input)
-        {
-            var reader = new StringReader(input);
-            return Process(reader);
-        }
+        public State Process(string input) => Process(new StringReader(input));
 
         public State Process(TextReader reader)
         {
