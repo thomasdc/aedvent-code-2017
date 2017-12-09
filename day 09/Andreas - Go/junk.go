@@ -14,7 +14,7 @@ func main(){
 
 func ParseScore(s string) int{
 	//clean strings
-	s = removeGarbage(s)
+	s = removeCancels(s)
 
 	lvl := 0
 	score :=  0
@@ -36,7 +36,7 @@ func ParseScore(s string) int{
 	return score
 }
 
-func removeGarbage(s string) string{
+func removeCancels(s string) string{
 	res := ""
 	for i := 0; i < len(s) ; i++{
 		c := s[i]
