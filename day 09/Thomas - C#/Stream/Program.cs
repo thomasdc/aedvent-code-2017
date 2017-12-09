@@ -10,7 +10,7 @@ namespace Stream
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Part1(File.ReadAllText("input.txt")));
+            Console.WriteLine(Part2(File.ReadAllText("input.txt")));
             Console.ReadLine();
         }
 
@@ -25,6 +25,19 @@ namespace Stream
             }
 
             return root.GetTotalValue();
+        }
+
+        private static int Part2(string rawInput)
+        {
+            var input = ClearExclamationMarks(rawInput).Skip(1);
+            var root = new Group(null, 1);
+            Node node = root;
+            foreach (var @char in input)
+            {
+                node = node.Process(@char);
+            }
+
+            return root.GetTotalGarbageCount();
         }
 
         private static string ClearExclamationMarks(string input)
@@ -69,6 +82,8 @@ namespace Stream
             public abstract Node Process(char @char);
 
             public abstract int GetTotalValue();
+
+            public abstract int GetTotalGarbageCount();
         }
 
         class Group : Node
@@ -104,11 +119,18 @@ namespace Stream
             {
                 return Value + Children.Sum(_ => _.GetTotalValue());
             }
+
+            public override int GetTotalGarbageCount()
+            {
+                return 0 + Children.Sum(_ => _.GetTotalGarbageCount());
+            }
         }
 
         class Garbage : Node
         {
             public Garbage(Node parent) : base(parent) { }
+
+            private int _garbageCount = 0;
 
             public override Node Process(char @char)
             {
@@ -117,12 +139,18 @@ namespace Stream
                     return Parent;
                 }
 
+                _garbageCount++;
                 return this;
             }
 
             public override int GetTotalValue()
             {
                 return 0;
+            }
+
+            public override int GetTotalGarbageCount()
+            {
+                return _garbageCount;
             }
         }
     }
