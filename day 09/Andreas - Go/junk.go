@@ -8,9 +8,10 @@ import (
 
 func main(){
 	input := *readInput("input.txt")
-
 	fmt.Println(ParseScore(input))
+	fmt.Println(CollectGarbage(input))
 }
+
 
 func ParseScore(s string) int{
 	//clean strings
@@ -35,25 +36,31 @@ func ParseScore(s string) int{
 
 	return score
 }
-/*
 func CollectGarbage(s string) int{
 	s = removeCancels(s)
 
 	ctr := 0 
 	inGarbage := false
 
-	for pos, c := range s {
+	for _, c := range s {
 
+		if inGarbage{
+			ctr++
+		}
+
+		//are we moving in or out garbage ?
 		if c == rune('<') {
 			inGarbage = true
-		} else if c == rune('>') && pos > 0 && s[pos-1] != byte('!'){
+		} else if c == rune('>') {
 			inGarbage = false
+			ctr-- //correct
 		}
 	}
 
-	return score
+	return ctr
 }
-*/
+
+
 func removeCancels(s string) string{
 	res := ""
 	for i := 0; i < len(s) ; i++{
@@ -69,7 +76,6 @@ func removeCancels(s string) string{
 
 	return res
 }
-
 func readInput(fname string) *string {
 	s, _ := ioutil.ReadFile(fname)
 	res := string(s)
