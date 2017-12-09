@@ -19,7 +19,7 @@ func ParseScore(s string) int{
 	lvl := 0
 	score :=  0
 	inGarbage := false
-	for pos, c := range s {
+	for _, c := range s {
 
 		if c == rune('{') && !inGarbage {
 			lvl++
@@ -28,6 +28,24 @@ func ParseScore(s string) int{
 			lvl--
 		} else if c == rune('<') {
 			inGarbage = true
+		} else if c == rune('>') {
+			inGarbage = false
+		}
+	}
+
+	return score
+}
+/*
+func CollectGarbage(s string) int{
+	s = removeCancels(s)
+
+	ctr := 0 
+	inGarbage := false
+
+	for pos, c := range s {
+
+		if c == rune('<') {
+			inGarbage = true
 		} else if c == rune('>') && pos > 0 && s[pos-1] != byte('!'){
 			inGarbage = false
 		}
@@ -35,7 +53,7 @@ func ParseScore(s string) int{
 
 	return score
 }
-
+*/
 func removeCancels(s string) string{
 	res := ""
 	for i := 0; i < len(s) ; i++{
@@ -51,7 +69,6 @@ func removeCancels(s string) string{
 
 	return res
 }
-
 
 func readInput(fname string) *string {
 	s, _ := ioutil.ReadFile(fname)
