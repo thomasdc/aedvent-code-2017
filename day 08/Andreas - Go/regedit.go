@@ -14,22 +14,28 @@ func main(){
 }
 
 var registers = map[string]int{} //Sharing is caring !
-func Regedit(s string) int{
+func Regedit(s string) (int, int){
 
 	instructions := strings.Split(s, "\n")
 	
+
+	maxValDuring := 0 //Assumption we will find a number > 0
 	for _, instr := range instructions{
-		handleInstruction(instr)
+		executed, newVal := handleInstruction(instr)
+
+		if executed && newVal >= maxValDuring{
+			maxValDuring = newVal
+		}
 	}
 
-	maxVal := 0
+	maxVal := 0 //assumption that there is a number > 0
 	for _, v := range registers{
 		if v >= maxVal {
 			maxVal = v
 		}
 	}
 
-	return maxVal
+	return maxVal, maxValDuring
 }
 
 
@@ -51,16 +57,22 @@ var compiler = map[string]func(string, int)bool{
 	"==" : func(reg string, value int)bool { return registers[reg] == value },
 	"!=" : func(reg string, value int)bool { return registers[reg] != value },
 }
-func handleInstruction(s string){
-	parts := strings.Split(s, " ")
+func handleInstruction(s string) (bool,int){
+	executed := false
+	newVal := 0
 
+	parts := strings.Split(s, " ")
 	ifVal, _ := strconv.Atoi(parts[6])
 	inVal, _ := strconv.Atoi(parts[2])
-
-
 	if compiler[parts[5]](parts[4], ifVal){
+		
 		compiler[parts[1]](parts[0], inVal)
+
+		executed = true
+		newVal = registers[parts[0]]
 	}
+
+	return executed, newVal
 }
 
 func readInput(fname string) string {
