@@ -26,11 +26,11 @@ cntj (57)`,
 
 
 
-func TestFindBottom(t *testing.T){
+func TestPart1(t *testing.T){
 
 	for _, test := range tests {
 
-		actual := FindBottom(test.input)
+		actual := part1(test.input)
 		
 		if actual != test.output {
 			t.Fatalf("Mistakes were made.. %q returned %s expecting %s.", 
@@ -39,5 +39,14 @@ func TestFindBottom(t *testing.T){
 				test.output,
 			)
 		}
+	}
+}
+
+//give it some input!
+func TestPart2(t *testing.T){
+
+	for _, test := range tests {
+
+		part2( test.input )
 	}
 }
