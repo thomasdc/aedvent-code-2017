@@ -1,8 +1,6 @@
 package main.scala.y2017.Day05
 
-object Runner extends Runner {}
-
-class Runner {
+object Runner {
   class Context(val offsets: Array[Int], var position: Int) {
     def update(newOffset: Int) {
       val currentOffset = offsets(position)
@@ -11,7 +9,7 @@ class Runner {
     }
   }
 
-  def run(input: List[Int], specialIncrementing: Boolean = false): Int = {
+  def run(input: Array[Int], specialIncrementing: Boolean = false): Int = {
     var context = new Context(input.toArray, 0)
 
     var steps = 0
@@ -26,14 +24,13 @@ class Runner {
   def step(context: Context, specialIncrementing: Boolean = false): Context = {
     val currentOffset = context.offsets(context.position)
 
-    val newOffset =
+    context.update(
       if(specialIncrementing)
         if(currentOffset >= 3) currentOffset - 1
         else currentOffset + 1
       else
         currentOffset + 1
-
-    context.update(newOffset)
+    )
     context
   }
 }

@@ -1,11 +1,9 @@
 package main.scala.y2017.Day06
 
-object Runner extends Runner {}
-
-class Runner {
-  var seenConfigurations = scala.collection.mutable.MutableList[List[Int]]()
-
+object Runner {
   def run(memoryBanks: List[Int], returnCycleSize: Boolean = false): Int = {
+    var seenConfigurations = scala.collection.mutable.MutableList[List[Int]]()
+
     var memoryBankUnderConstruction = memoryBanks
     while(!seenConfigurations.contains(memoryBankUnderConstruction)) {
       seenConfigurations += memoryBankUnderConstruction

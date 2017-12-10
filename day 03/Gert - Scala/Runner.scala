@@ -1,10 +1,9 @@
 package main.scala.y2017.Day03
 
-object Runner extends Runner {}
-
-class Runner {
+object Runner {
   type Grid = Array[Array[Int]]
-  type State = (Grid, Int, Int)
+  type Pos = (Int, Int)
+  type State = (Grid, Pos)
 
   val startValue = 1
 
@@ -13,35 +12,41 @@ class Runner {
   val south = (1, 0)
   val west = (0, -1)
 
-  def generateGrid(seed: Int, summedValue: Boolean = false): Grid = {
+  def generateGrid(seed: Int, summedValue: Boolean = false): (Grid, Int) = {
     val dimension = calculateDimension(seed)
-
-    // Initialize grid w/ center
-    val initialGrid = Array.ofDim[Int](dimension, dimension)
-    initialGrid(dimension/2).update(dimension/2, startValue)
+    var firstNumberLargerThanSeed = -1
 
     // Start immediately right of the center to populate grid
-    val initialState = (initialGrid, dimension/2, dimension/2 + 1)
-    ((startValue + 1) to seed).foldLeft(initialState)((state, i) => {
-      val (grid, x, y) = state
+    val initialState = (initialGrid(dimension), initialPos(dimension))
 
-      val value = if(!summedValue) i else calculateValue(grid, x, y)
+    (((startValue + 1) to seed).foldLeft(initialState)((state, i) => {
+      val (grid, pos) = state
 
-      if(value > seed)
-        throw new Exception("First number larger than %s: %s".format(seed, value))
+      val value = if(!summedValue) i else calculateValue(grid, pos)
 
-      grid(x).update(y, value)
-      val direction = determineDirection(grid, x, y)
+      if(value > seed && firstNumberLargerThanSeed == -1)
+        firstNumberLargerThanSeed = value
 
-      (grid, x + direction._1, y + direction._2)
-    })._1
+      grid(pos._1).update(pos._2, value)
+      val direction = determineDirection(grid, pos)
+
+      (grid, (pos._1 + direction._1, pos._2 + direction._2))
+    })._1, firstNumberLargerThanSeed)
   }
 
-  def calculateValue(grid: Grid, x: Int, y: Int): Int = {
-    val lowX = if(x - 1 >= 0) x - 1 else x
-    val lowY = if(y - 1 >= 0) y - 1 else y
-    val highX = if(x + 1 < grid.length) x + 1 else x
-    val highY = if(y + 1 < grid(x).length) y + 1 else y
+  def initialGrid(dimension: Int): Grid = {
+    val grid = Array.ofDim[Int](dimension, dimension)
+    grid(dimension/2).update(dimension/2, startValue)
+    grid
+  }
+
+  def initialPos(dimension: Int): Pos = (dimension/2, dimension/2 + 1)
+
+  def calculateValue(grid: Grid, pos: Pos): Int = {
+    val lowX = if(pos._1 - 1 >= 0) pos._1 - 1 else pos._1
+    val lowY = if(pos._2 - 1 >= 0) pos._2 - 1 else pos._2
+    val highX = if(pos._1 + 1 < grid.length) pos._1 + 1 else pos._1
+    val highY = if(pos._2 + 1 < grid(pos._1).length) pos._2 + 1 else pos._2
 
     (lowX to highX).flatMap(neighBourX =>
       (lowY to highY).map(neighBourY => grid(neighBourX)(neighBourY))
@@ -50,12 +55,12 @@ class Runner {
 
   def calculateDimension(seed: Int): Int = Math.ceil(Math.sqrt(seed)).toInt
 
-  def determineDirection(grid: Grid, x: Int, y: Int): (Int, Int) = {
+  def determineDirection(grid: Grid, pos: Pos): (Int, Int) = {
     // Test which neighbours are already visited
-    val left = y - 1 >= 0 && grid(x)(y - 1) != 0
-    val above = x - 1 >= 0 && grid(x - 1)(y) != 0
-    val right = y + 1 < grid(x).length && grid(x)(y + 1) != 0
-    val under = x + 1 < grid.length && grid(x + 1)(y) != 0
+    val left = pos._2 - 1 >= 0 && grid(pos._1)(pos._2 - 1) != 0
+    val above = pos._1 - 1 >= 0 && grid(pos._1 - 1)(pos._2) != 0
+    val right = pos._2 + 1 < grid(pos._1).length && grid(pos._1)(pos._2 + 1) != 0
+    val under = pos._1 + 1 < grid.length && grid(pos._1 + 1)(pos._2) != 0
 
     if(left && !above && !right) north
     else if(!left && !above && under) west
@@ -64,9 +69,7 @@ class Runner {
     else (0, 0)
   }
 
-  def print(grid: Grid) = grid.foreach(row => println(row.mkString(",\t")))
-
-  def locate(grid: Grid, value: Int): (Int, Int) = {
+  def locate(grid: Grid, value: Int): Pos = {
     for(x <- grid.indices)
       for(y <- grid(x).indices)
         if(grid(x)(y) == value)
@@ -75,13 +78,11 @@ class Runner {
     throw new Exception("Value %s not found in grid".format(value))
   }
 
-  def lowestNeighbourPosition(grid: Grid, pos: (Int, Int)): (Int, Int) = {
-    val (x, y) = pos
-
-    val left = (valueOf(grid, x, y - 1), west)
-    val above = (valueOf(grid, x - 1, y), north)
-    val right = (valueOf(grid, x, y + 1), east)
-    val under = (valueOf(grid, x + 1, y), south)
+  def lowestNeighbourPosition(grid: Grid, pos: Pos): Pos = {
+    val left = (valueOf(grid, (pos._1, pos._2 - 1)), west)
+    val above = (valueOf(grid, (pos._1 - 1, pos._2)), north)
+    val right = (valueOf(grid, (pos._1, pos._2 + 1)), east)
+    val under = (valueOf(grid,(pos._1 + 1, pos._2)), south)
 
     if(left._1 <= above._1 && left._1 <= right._1 && left._1 <= under._1) left._2
     else if(above._1 <= left._1 && above._1 <= right._1 && above._1 <= under._1) above._2
@@ -90,26 +91,27 @@ class Runner {
     else throw new Exception("No lowest neighbour found")
   }
 
-  def valueOf(grid: Grid, x: Int, y: Int): Int = {
-    if (y < 0 || x < 0 || x >= grid.length || y >= grid(x).length || grid(x)(y) == 0)
+  def valueOf(grid: Grid, pos: Pos): Int = {
+    if (pos._2 < 0 || pos._1 < 0 || pos._1 >= grid.length
+      || pos._2 >= grid(pos._1).length || grid(pos._1)(pos._2) == 0)
       Int.MaxValue
     else
-      grid(x)(y)
+      grid(pos._1)(pos._2)
   }
 
   // Returns the number of steps needed
-  def travelToCenter(grid: Grid, initialPosition: (Int, Int)): Int = {
+  def travelToCenter(grid: Grid, initialPosition: Pos): Int = {
     var position = initialPosition
     var steps = 0
 
     while (!isCenter(grid, position)) {
-      steps = steps + 1
       val direction = lowestNeighbourPosition(grid, position)
       position = (position._1 + direction._1, position._2 + direction._2)
+      steps += 1
     }
 
     steps
   }
 
-  def isCenter(grid: Grid, pos: (Int, Int)): Boolean = grid(pos._1)(pos._2) == startValue
+  def isCenter(grid: Grid, pos: Pos): Boolean = grid(pos._1)(pos._2) == startValue
 }

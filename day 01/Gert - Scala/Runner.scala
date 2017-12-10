@@ -1,8 +1,6 @@
 package main.scala.y2017.Day01
 
-object Runner extends Runner {}
-
-class Runner {
+object Runner {
   def run(input: String): Int = genericRun(input, 1)
 
   def run2(input: String): Int = genericRun(input, input.length / 2)

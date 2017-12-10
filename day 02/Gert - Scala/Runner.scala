@@ -1,8 +1,6 @@
 package main.scala.y2017.Day02
 
-object Runner extends Runner {}
-
-class Runner {
+object Runner {
   type Sheet = Array[Array[Int]]
 
   def run(sheet: Sheet): Int = sheet.map(row => largestDiff(row)).sum
@@ -15,10 +13,7 @@ class Runner {
     row.indices.foreach(x =>
       row.indices.foreach(y =>
         if(row(x) != row(y) && row(x) % row(y) == 0)
-          return row(x) / row(y)
-      )
-    )
-
+          return row(x) / row(y)))
     throw new Exception("Aaargh solution should be found!!")
   }
 }

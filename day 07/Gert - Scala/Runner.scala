@@ -1,10 +1,6 @@
 package main.scala.y2017.Day07
 
-object Runner extends Runner {}
-
-class Runner {
-  type Entry = (String, Int, Array[String])
-
+object Runner {
   def run(input: Iterator[String]): String = {
     val shouts = input.map(parse).toList
 
@@ -32,9 +28,8 @@ class Runner {
           val grouped = weightedChildren.groupBy(_._2)
           if(grouped.size != 1) {
             val different = grouped.filter(_._2.size == 1).head._2.head
-            val differentWeight = different._2
             val regularWeight = grouped.filter(_._2.size != 1).keys.head
-            val diff = regularWeight - differentWeight
+            val diff = regularWeight - different._2
 
             return nodes.get(different._1).get._1 + diff
           }
@@ -48,16 +43,12 @@ class Runner {
   }
 
   def level(shouts: Map[String, (Int, Set[String])]): Map[String, (Int, Int, Set[String])] = {
-    val root = getRoot(shouts)
-
     var currentLevel = 0
-    var toMarkNext = List(root)
-    var allLevelledNodes = scala.collection.mutable.
-      MutableList[Map[String, (Int, Int, Set[String])]]()
+    var toMarkNext = List(getRoot(shouts))
+    var allLevelledNodes = scala.collection.mutable.MutableList[Map[String, (Int, Int, Set[String])]]()
 
     while(toMarkNext.nonEmpty) {
-      val levelledNodes = shouts
-        .filter(node => toMarkNext.contains(node._1))
+      val levelledNodes = shouts.filter(node => toMarkNext.contains(node._1))
         .map(node => node._1 -> (node._2._1, currentLevel, node._2._2))
       toMarkNext = levelledNodes.flatMap(_._2._3).toList
       allLevelledNodes +=  levelledNodes
@@ -67,12 +58,12 @@ class Runner {
     allLevelledNodes.flatten.toMap
   }
 
-  def getRoot(shouts: Map[String, (Int, Set[String])]): String = {
+  def getRoot(shouts: Map[String, (Int, Set[String])]): String =
     shouts.keySet.diff(shouts.values.flatMap(_._2).toSet).head
-  }
 
-  def parse(line: String): Entry = {
+  def parse(line: String): (String, Int, Array[String]) = {
     val splitted = line.split(" -> ")
+
     val disk = splitted.head.split(" ").head
     val weight = splitted.head.split(" ")(1).stripPrefix("(").stripSuffix(")").toInt
     val towers = if(splitted.length != 2) Array[String]() else splitted(1).split(", ")

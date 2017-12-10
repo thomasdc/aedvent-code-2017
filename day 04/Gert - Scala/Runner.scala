@@ -1,21 +1,12 @@
 package main.scala.y2017.Day04
 
-object Runner extends Runner {}
+object Runner {
+  def run(input: String): Boolean =
+    input.split(" ").groupBy(word => word).forall(_._2.length == 1)
 
-class Runner {
-  def run(input: String): Boolean = {
-    input.split(" ")
-      .groupBy(word => word)
-      .forall(_._2.length == 1)
-  }
+  def run(input: Iterator[String]): Int = input.map(line => run(line)).count(valid => valid)
 
-  def run(input: Iterator[String]): Int = {
-    input.map(line => run(line)).count(valid => valid)
-  }
-
-  def run2(input: Iterator[String]): Int = {
-    input.map(line => run2(line)).count(valid => valid)
-  }
+  def run2(input: Iterator[String]): Int = input.map(line => run2(line)).count(valid => valid)
 
   def run2(input: String): Boolean = {
     val allWords = input.split(" ").zipWithIndex
@@ -25,11 +16,9 @@ class Runner {
     })
   }
 
-  def isValid(word: String, otherWords: Array[String]): Boolean = {
+  def isValid(word: String, otherWords: Array[String]): Boolean =
     otherWords.forall(otherWord => !isAnagram(word, otherWord))
-  }
 
-  def isAnagram(a: String, b: String): Boolean = {
+  def isAnagram(a: String, b: String): Boolean =
     a.toCharArray.sorted sameElements b.toCharArray.sorted
-  }
 }
