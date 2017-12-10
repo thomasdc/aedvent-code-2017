@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace Knots
 {
@@ -7,6 +8,7 @@ namespace Knots
     {
         static void Main(string[] args)
         {
+
             Run(() =>
             {
                 var input = new byte[] { 206, 63, 255, 131, 65, 80, 238, 157, 254, 24, 133, 2, 16, 0, 1, 3 };
