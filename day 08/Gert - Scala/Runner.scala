@@ -1,9 +1,6 @@
 package main.scala.y2017.Day08
 
-object Runner extends Runner {}
-
-class Runner {
-  // Register, Op, Increment, CommandRegister, Comparator, Check
+object Runner {
   type Command = (String, String, Int, String, String, Int)
 
   def run(input: List[String], part2: Boolean = false): Int = {
@@ -17,10 +14,8 @@ class Runner {
       }
     })
 
-    if(part2)
-      highestRegisterEvah
-    else
-      register.values.max
+    if(part2) highestRegisterEvah
+    else register.values.max
   }
 
   def updateRegister(command: Command, register: scala.collection.mutable.Map[String, Int]): scala.collection.mutable.Map[String, Int] = {

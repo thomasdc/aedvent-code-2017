@@ -2,8 +2,6 @@ package main.scala.y2017.Day10
 
 import main.scala.TestBase
 
-import scala.io.Source
-
 class Tests extends TestBase {
   test("Example 1") { Runner.run(List(3, 4, 1, 5), 5) shouldBe 12 }
 

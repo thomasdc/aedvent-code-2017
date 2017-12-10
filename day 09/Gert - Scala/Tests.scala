@@ -1,7 +1,6 @@
 package main.scala.y2017.Day09
 
 import main.scala.TestBase
-
 import scala.io.Source
 
 class Tests extends TestBase {
@@ -15,7 +14,7 @@ class Tests extends TestBase {
 
   test("Puzzle 1") {
     val input = Source.fromFile("test/main/scala/y2017/Day09/puzzle.txt").getLines().mkString("")
-    println(Runner.run(input)) // 11347
+    Runner.run(input) shouldBe 11347
   }
 
   test("Example 2.1") { Runner.run("<>", true) shouldBe 0 }
@@ -29,6 +28,6 @@ class Tests extends TestBase {
 
   test("Puzzle 2") {
     val input = Source.fromFile("test/main/scala/y2017/Day09/puzzle.txt").getLines().mkString("")
-    println(Runner.run(input, true)) // 5404
+    Runner.run(input, true) shouldBe 5404
   }
 }
