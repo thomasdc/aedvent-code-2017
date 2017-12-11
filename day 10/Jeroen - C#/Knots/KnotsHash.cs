@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Knots
 {
     static class KnotsHash
     {
-        public static string ComputeHash(string input)
+        public static string Hash(string input)
         {
-            var bytes = input.Select(i => (byte)i).Concat(new byte[] { 17, 31, 73, 47, 23 }).ToArray();
-            var array = ComputeHash(bytes, 256, 64).ReduceHash().ToArray();
+            var bytes = Encoding.ASCII.GetBytes(input).Concat(new byte[] {17, 31, 73, 47, 23}).ToArray();
+            var array = Hash(bytes, 256, 64).ReduceHash().ToArray();
             var hex = BitConverter.ToString(array).Replace("-", "").ToLower();
             return hex;
         }
 
-        internal static byte[] ComputeHash(byte[] input, int length = 256, int rounds = 1)
+        internal static byte[] Hash(byte[] input, int length = 256, int rounds = 1)
         {
             var result = Enumerable.Range(0, length).Select(i => (byte)i).ToArray();
             var skip = 0;

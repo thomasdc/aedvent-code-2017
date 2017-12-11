@@ -47,7 +47,7 @@ namespace Memory
         }
 
         [Theory]
-        [InlineData(5, 4, 0, 2, 7, 0)]
+        [InlineData(5, 4, (byte)0, (byte)2, (byte)7, (byte)0)]
         public void Example(int expectedSteps, int expectedLoopSize, params byte[] input)
         {
             var result = Memory.Cycles(input.ToImmutableArray());
