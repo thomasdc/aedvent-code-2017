@@ -8,19 +8,35 @@ namespace Hex
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Part1(File.ReadAllText("input.txt").Split(",")));
+            Console.WriteLine(Part2(File.ReadAllText("input.txt").Split(",")));
         }
 
         private static int Part1(string[] directions)
         {
-            var x = 0;
-            var y = 0;
-            var z = 0;
+            return TakeSteps(directions, out _);
+        }
+
+        private static int Part2(string[] directions)
+        {
+            TakeSteps(directions, out var maxDistance);
+            return maxDistance;
+        }
+        
+        private static int TakeSteps(string[] directions, out int maxDistance)
+        {
+            int x = 0, y = 0, z = 0;
+            maxDistance = int.MinValue;
             foreach (var direction in directions)
             {
                 (x, y, z) = Move(x, y, z, direction);
+                maxDistance = Math.Max(maxDistance, Distance(x, y, z));
             }
 
+            return Distance(x, y, z);
+        }
+
+        private static int Distance(int x, int y, int z)
+        {
             return new [] {Math.Abs(x), Math.Abs(y), Math.Abs(z)}.Max();
         }
 
