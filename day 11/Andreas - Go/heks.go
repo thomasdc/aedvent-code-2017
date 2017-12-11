@@ -1,6 +1,6 @@
 package main
 //http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
-
+//or alternatively solution via https://www.redblobgames.com/grids/hexagons/#coordinates
 
 import (
 	"fmt"
