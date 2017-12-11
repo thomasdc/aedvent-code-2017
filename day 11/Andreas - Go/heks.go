@@ -22,16 +22,20 @@ func main(){
 	fmt.Println( Hexed(*input) )
 }
 
-func Hexed(s string) int{
+func Hexed(s string) (int, int){
 
 	path := map[string]int{}
+	maxDist := 0
 	for _, step := range steps(s){
 		path[step]++
+
+		dist := pathLength(&path)
+		if maxDist < dist{ maxDist = dist }
 	}
 
 	fmt.Println(path)
 
-	return pathLength(&path)
+	return pathLength(&path), maxDist
 }
 
 func steps(s string) []string{
