@@ -19,8 +19,18 @@ class Tests extends TestBase {
   test("Example 2.3") { Runner.run2("ne,ne,s,s") shouldBe 2 }
   test("Example 2.4") { Runner.run2("se,sw,se,sw,sw") shouldBe 3 }
 
+  test("Example 1.1b") { Runner.runB("ne,ne,ne") shouldBe 3 }
+  test("Example 1.2b") { Runner.runB("ne,ne,sw,sw") shouldBe 2 }
+  test("Example 1.3b") { Runner.runB("ne,ne,s,s") shouldBe 2 }
+  test("Example 1.4b") { Runner.runB("se,sw,se,sw,sw") shouldBe 3 }
+
   test("Puzzle 2") {
     val input = Source.fromFile("test/main/scala/y2017/Day11/puzzle.txt").getLines().mkString("")
     Runner.run2(input) shouldBe 1622 // 1623 is wrong
+  }
+
+  test("Puzzle 2b") {
+    val input = Source.fromFile("test/main/scala/y2017/Day11/puzzle.txt").getLines().mkString("")
+    Runner.runB(input) shouldBe 1622
   }
 }
