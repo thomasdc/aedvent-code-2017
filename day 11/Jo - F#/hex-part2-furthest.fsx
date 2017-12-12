@@ -1,7 +1,7 @@
 #r @"..\..\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
 open Swensen.Unquote
 
-//Using axial coordinates as documented in https://www.redblobgames.com/grids/hexagons/
+//Using cube coordinates as documented in https://www.redblobgames.com/grids/hexagons/
 
 type Step =
     | N
