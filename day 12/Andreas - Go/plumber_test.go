@@ -7,6 +7,7 @@ import (
 var tests = []struct{
 	input string
 	output int
+	groups int
 }{
 	{
 		input: `0 <-> 2
@@ -17,6 +18,7 @@ var tests = []struct{
 5 <-> 6
 6 <-> 4, 5`,
 		output: 6,
+		groups: 2,
 	},
 }
 
@@ -35,3 +37,20 @@ func TestInGroup(t *testing.T){
 		}
 	}
 }
+
+func TestCountGroups(t *testing.T){
+	
+	for _, test := range tests {
+
+		actual := CountGroups(test.input)
+		
+		if actual != test.groups {
+			t.Fatalf("Mistakes were made.. %s returned %d expecting %d.", 
+				test.input,
+				actual, 
+				test.groups,
+			)
+		}
+	}
+}
+

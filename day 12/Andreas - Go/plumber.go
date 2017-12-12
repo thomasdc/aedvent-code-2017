@@ -11,13 +11,38 @@ func main(){
 	input := readInput("input.txt")
 
 	fmt.Println( InGroup(input) )
+	fmt.Println( CountGroups(input) )
 }
 
 
 func InGroup(s string) int{
 	graph := parseInput(s)
-	res := connectedToZero(graph)
-	return res
+	res := connectedTo(0, graph)
+	return len(*res)
+}
+func CountGroups(s string) int{
+	graph := *(parseInput(s))
+	
+	//create stack with numbers in order
+	candidates := stack{}
+	for k, _ := range graph{
+		candidates.push(k)
+	}
+	
+	ctr := 0
+	seen := map[int]bool{}
+	for start := candidates.pop() ; start >= 0 ; start = candidates.pop(){
+		if seen[start] { continue }
+
+		ctr++
+		groupMembers := *(connectedTo(start, &graph))
+		for k, _ := range groupMembers {
+			seen[k] = true
+		}
+
+	}
+
+	return ctr
 }
 
 func parseInput(s string) *map[int]map[int]bool{
@@ -43,38 +68,35 @@ func parseInput(s string) *map[int]map[int]bool{
 
 	return &res
 }
-func connectedToZero(m *map[int]map[int]bool) int {
+func connectedTo(start int, m *map[int]map[int]bool) *map[int]bool {
 	graph := *m
 
 
-	seen := map[int]bool{}
+	seen := map[int]bool{start: true}
 	
 	todos := stack{}
-	for k, _ := range graph[0] {
+	for k, _ := range graph[start] {
 		todos.push(k)
 	}
 
 
-	for key := todos.pop() ; key > 0 ; key = todos.pop(){
+	for key := todos.pop() ; key >= 0 ; key = todos.pop(){
 
 		if seen[key] { continue }
 
 		seen[key] = true
-	
 		for k, _ := range graph[key] {
 			if !seen[k] { todos.push(k) }
 		}
 
 	}
 
-	return len(seen) + 1 //+1 => node itself
+	return &seen
 }
 func readInput(fname string) string {
 	s, _ := ioutil.ReadFile(fname)
 	return string(s)
 }
-
-
 
 
 type stack []int
