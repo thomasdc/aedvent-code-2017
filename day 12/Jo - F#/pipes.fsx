@@ -49,7 +49,23 @@ let solve start connections = fixpoint (expand connections) [start]
 //5 <-> 5"
 let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt")
 
-input
-|> parse
-|> solve 0
+let parsed =
+    input
+    |> parse
+
+//part 1
+//parsed
+//|> solve 0
+//|> List.length
+
+//part 2
+let rec findGroups acc connections =
+    match connections with
+    | [] -> acc
+    | (src,_) :: _ ->
+        let group = solve src connections
+        let remainingConnections = connections |> List.filter (fun (s,d) -> group |> List.contains d |> not && group |> List.contains s |> not)
+        findGroups (group :: acc) remainingConnections
+
+findGroups [] parsed
 |> List.length
