@@ -10,7 +10,7 @@ namespace Plumber
         static void Main(string[] args)
         {
             var pipes = Parse(File.ReadAllLines("input.txt")).ToArray();
-            Console.WriteLine(Part1(pipes));
+            Console.WriteLine(Part2(pipes));
         }
 
         private static IEnumerable<(string programA, string programB)> Parse(string[] inputLines)
@@ -29,28 +29,48 @@ namespace Plumber
         private static int Part1((string programA, string programB)[] pipes)
         {
             var programs = ExtractPrograms(pipes);
-            var group = Visit(programs["0"], new List<string>());
+            var group = Visit(programs.Single(_ => _.Name == "0"), new List<Programma>());
             return group.Count;
         }
 
-        private static IList<string> Visit(Programma program, IList<string> visitedGroups)
+        private static int Part2((string programA, string programB)[] pipes)
         {
-            if (visitedGroups.Contains(program.Name))
+            var programs = ExtractPrograms(pipes);
+            var groups = EnumerateGroups(programs.ToList());
+            return groups.Count;
+        }
+
+        private static IList<IList<Programma>> EnumerateGroups(IList<Programma> programs)
+        {
+            var groups = new List<IList<Programma>>();
+            while (programs.Any())
             {
-                return visitedGroups;
+                var program = programs.First();
+                var group = Visit(program, new List<Programma>());
+                groups.Add(group);
+                programs = programs.Where(x => group.All(y => y.Name != x.Name)).ToList();
+            }
+            return groups;
+        }
+
+        private static IList<Programma> Visit(Programma program, IList<Programma> visitedPrograms)
+        {
+            if (visitedPrograms.Contains(program))
+            {
+                return visitedPrograms;
             }
             
-            visitedGroups.Add(program.Name);
+            visitedPrograms.Add(program);
 
             foreach (var pipedProgram in program.PipedPrograms)
             {                
-                visitedGroups.Concat(Visit(pipedProgram, visitedGroups));
+                visitedPrograms.Concat(Visit(pipedProgram, visitedPrograms));
             }
 
-            return visitedGroups;
+            return visitedPrograms;
         }
 
-        private static IDictionary<string, Programma> ExtractPrograms((string programA, string programB)[] pipes)
+        private static IList<Programma> ExtractPrograms((string programA, string programB)[] pipes)
         {
             var programs = new Dictionary<string, Programma>();
             foreach (var pipe in pipes)
@@ -59,7 +79,7 @@ namespace Plumber
                 if (!programs.ContainsKey(pipe.programB)) programs[pipe.programB] = new Programma(pipe.programB);
                 programs[pipe.programA].PipedPrograms.Add(programs[pipe.programB]);
             }
-            return programs;
+            return programs.Values.ToList();
         }
 
         private class Programma
