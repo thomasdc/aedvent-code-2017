@@ -66,3 +66,17 @@ example |> parse |> moveThrough
 
 //part 1
 let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt" )
+(input |> parse |> moveThrough).Severity
+
+//part 2
+let rec delay f n =
+    match n with
+    | 0 -> f
+    | _ -> delay (tick f) (n - 1)
+
+let start = example |> parse
+
+Seq.initInfinite id
+|> Seq.map (fun d -> d, delay start d)
+|> Seq.map (fun (d, firewall) -> d, moveThrough firewall)
+|> Seq.find (fun (_, endState) -> endState.Severity = 0)
