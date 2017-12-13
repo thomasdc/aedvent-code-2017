@@ -36,4 +36,3 @@ for step in path:
     max_distance = max(max_distance, path_length(position[-1][0], position[-1][1]))
 
 path_length(position[-1][0], position[-1][1])
-path_lengtha(position[-1][0], position[-1][1])
