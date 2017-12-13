@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"fmt"
 	"io/ioutil"
+	"time"
 )
 
 func main(){
@@ -38,6 +39,7 @@ func Severity(firewall map[int]int, length int, delay int) int {
 }
 
 func Part2(input string) int{
+	defer track(time.Now(),"Part 2")
 	firewall, length := parseInput(input)
 
 	i := 0
@@ -88,4 +90,8 @@ func parseInput(s string) (map[int]int, int){
 func readInput(fname string) string {
 	s, _ := ioutil.ReadFile(fname)
 	return string(s)
+}
+func track(start time.Time, name string) {
+    elapsed := time.Since(start)
+    fmt.Printf(" %s took %s \n", name, elapsed)
 }
