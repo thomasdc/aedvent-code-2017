@@ -1,5 +1,4 @@
-#r @"..\..\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
-open Swensen.Unquote
+//Go grab a coffee, this might take a while :) Brute-forcing the whole thing
 open System
 
 type Direction = Up | Down
@@ -39,31 +38,31 @@ let tick firewall =
     firewall
     |> List.map tickLayer
 
-printf "Testing..."
-printfn "..done"
-
 let penalty position firewall = 
     firewall
     |> List.tryFind (fun layer -> layer.Depth = position)
     |> Option.filter (fun layer -> layer.Scanner.Position = 1)
-    |> Option.map (fun layer -> layer.Depth * layer.Range)
-    |> (fun o -> defaultArg o 0)
+    |> Option.map (fun layer -> true) 
+    |> (fun o -> defaultArg o false)
 
-type State = { Firewall : Layer list; Severity : int }
-let step {Firewall = f; Severity = s} position =
-    {Firewall = tick f; Severity = s + (penalty position f)}
+type State = { Firewall : Layer list; Penalty : bool }
+let step state position =
+    if state.Penalty then //fold with "short-circuit" when we hit a penalty
+        state
+    else    
+        let {Firewall = f; Penalty = p} = state
+        {Firewall = tick f; Penalty = p || (penalty position f)}
+
+let rec foldUntilPenalty stepF state positions =
+    match positions with
+    | [] -> state
+    | p :: ps ->
+        if state.Penalty then state
+        else
+            let next = stepF state p
+            foldUntilPenalty stepF next ps
 
 let moveThrough firewall =
     let ending = (Seq.maxBy (fun l -> l.Depth) firewall).Depth
     [0..ending]
-    |> List.fold step {Firewall = firewall; Severity = 0}
-
-let example = @"0: 3
-1: 2
-4: 4
-6: 4"
-example |> parse |> moveThrough
-
-//part 1
-let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt" )
-(input |> parse |> moveThrough).Severity
+    |> foldUntilPenalty step {Firewall = firewall; Penalty = false}
