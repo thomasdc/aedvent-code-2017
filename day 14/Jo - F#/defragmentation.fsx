@@ -101,14 +101,10 @@ let allLocations grid =
             yield (r,c)]
 
 let isUsed grid (r,c) = 
-    //eeeeew
-    match 
-        grid 
-        |> List.tryItem r
-        |> Option.map (fun row -> row |> List.tryItem c |> Option.map (fun v -> v = 1)) with
-    | Some (Some result) -> result
-    | Some None -> false
-    | None -> false
+    grid 
+    |> List.tryItem r
+    |> Option.bind (fun row -> row |> List.tryItem c |> Option.map (fun v -> v = 1))
+    |> (fun o-> defaultArg o false)
 
 let rec buildRegion acc toVisit grid = 
     match toVisit |> Set.toList with
