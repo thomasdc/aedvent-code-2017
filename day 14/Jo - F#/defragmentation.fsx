@@ -131,6 +131,9 @@ let regions (grid : int list list) =
             yield Some <| buildRegion Set.empty (Set.singleton (r,c)) grid
         else 
             yield None
-    ] |> List.choose id
+    ] 
+    |> List.choose id
+    |> Set.ofList
 
-regions binaryGrid
+let rs = regions binaryGrid
+rs |> Seq.length
