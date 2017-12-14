@@ -1,29 +1,14 @@
 package main
 
-/*       
-       ..---.. 
-     .'  _    `. 
- __..'  (o)    : 
-`..__          ; 
-     `.       / 
-       ;      `..---...___ 
-     .'                   `~-. .-') 
-    .                         ' _.' 
-   :                           : 
-   \                           ' 
-    +                         J 
-     `._                   _.' 
-        `~--....___...---~' mh 
-*/
-
 import (
 	"strconv"
 	"fmt"
 )
 
+
 func main(){
 	fmt.Println( Part1("hfdlxzhv") )
-
+	fmt.Println( Part2("hfdlxzhv") )
 }
 
 func Part1(s string) int{
@@ -35,14 +20,9 @@ func Part1(s string) int{
 
 	return res
 }
-
-
 func CountDucks(hash []byte) int{
-
 	res := 0
-
 	for _, bits := range hash {
-
 		if bits & 1 == 1 { res++ }
 		if bits & 2 == 2 { res++ }
 		if bits & 4 == 4 { res++ }
@@ -56,6 +36,68 @@ func CountDucks(hash []byte) int{
 
 	return res
 }
+
+func Part2(s string) int{
+
+	field := make([][]bool, 128)
+	for i := 0 ; i < 128 ; i++ {
+		input := s + "-" + strconv.Itoa(i)
+		bytes := Hash(input)
+		field[i] = makeLine(bytes)
+	}
+	return countZones(&field)
+}
+func makeLine(b []byte) []bool{
+	
+	res := make([]bool, 128)
+	for i, bits := range b {
+		for j, pos := 7, byte(1) ; j >= 0 ; j, pos = j-1, pos<<1 {
+			res[i*8 + j] = (bits & pos == pos)	
+		}
+	}
+	return res
+}
+func countZones(f *[][]bool) int{
+	field := *f
+	res := 0
+
+	for y := 0 ; y < 128 ; y++ {
+		for x := 0 ; x < 128 ; x++ {
+			if field[y][x] { 
+				clearPos(f, y, x)
+				res++
+			}
+		}
+	}
+	return res
+}
+func clearPos(f *[][]bool, y,x int){
+	field := *f
+	if !field[y][x] { return }
+	field[y][x] = false
+
+	for _, d := range []struct{dy,dx int}{ {-1,0}, {0,-1},{0,1}, {1,0} }{
+		yPos, xPos := y + d.dy, x+d.dx
+
+		if yPos < 0 || yPos >= 128 || xPos < 0 || xPos >= 128 { continue }
+		if field[yPos][xPos] { clearPos(f, yPos, xPos) }
+	}
+}
+func printField(f *[][]bool){ //debug
+	field := *f
+	for _, line := range field {
+
+		for _, val := range line {
+			if val { 
+				fmt.Print("1") 
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
 
 //copied from day 10
 func Hash(input string) []byte{
@@ -122,5 +164,15 @@ func denseIt(list []byte) []byte{
 		res = append(res, xor)
 	}
 
+	return res
+}
+func makeString(hash []byte) string{
+	res := ""
+	for _, b := range hash {
+		c := fmt.Sprintf("%x", b)
+		
+		if len(c) < 2 { c = "0" + c}
+		res += c
+	}
 	return res
 }
