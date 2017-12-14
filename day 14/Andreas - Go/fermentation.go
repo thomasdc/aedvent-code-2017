@@ -83,7 +83,7 @@ func clearPos(f *[][]bool, y,x int){
 		if field[yPos][xPos] { clearPos(f, yPos, xPos) }
 	}
 }
-func PrintField(f *[][]bool){ //debug
+func printField(f *[][]bool){ //debug
 	field := *f
 	for _, line := range field {
 
