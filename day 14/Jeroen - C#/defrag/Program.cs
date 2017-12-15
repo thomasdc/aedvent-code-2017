@@ -15,11 +15,9 @@ namespace defrag
             Console.WriteLine(Convert.ToString(x << 1, 2).PadLeft(9, '0'));
             Console.WriteLine(Convert.ToString(x >> 1, 2).PadLeft(9, '0'));
 
-            Defrag.CountBits(new BigInteger(1));
-
             string key = "hxtvlmkl";
             Run(() => Defrag.CountBitsInGrid(key));
-            Run(() => Defrag.PartTwo(key));
+            Run(() => Defrag.CountRegions(key));
         }
 
         static void Run<T>(Func<T> f)
