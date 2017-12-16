@@ -63,6 +63,20 @@ let dance startPositions moves =
 
 let toString = Seq.map string >> String.concat ""
 
+//part 2
+let rec repeat nb start moves =
+    if nb = 0 then 
+        start
+    else
+        repeat (nb - 1) (dance start moves) moves
+
+//1 billion iterations makes computer go boom, in a state space this small hoping for a cycle somewhere
+let rec lengthOfPossibleCycle endingPositions current moves =
+    if Set.contains current endingPositions then 
+        0
+    else 
+        1 + lengthOfPossibleCycle (Set.add current endingPositions) (dance current moves) moves
+
 let example = "s1,x3/4,pe/b"
 printf "Testing..."
 test <@ parseMove "s12" = Spin 12 @>
@@ -81,8 +95,15 @@ test <@ doPartner ['a'..'e'] ('a', 'b') |> toString = "bacde" @>
 test <@ doPartner ['a'..'e'] ('e', 'c') |> toString = "abedc" @>
 
 test <@ dance ['a'..'e'] (parse example) |> toString = "baedc" @>
+test <@ repeat 2 ['a'..'e'] (parse example) |> toString = "ceadb" @>
 printfn "..done"
 
 let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt" )
 let moves = parse input
 let finalPositions = dance ['a'..'p'] moves
+sprintf "%s" (toString finalPositions)
+
+let cycle_length = lengthOfPossibleCycle Set.empty ['a'..'p'] moves
+let billion = 1_000_000_000
+let nb_dances = billion % cycle_length
+let part2 = repeat nb_dances ['a'..'p'] moves |> toString
