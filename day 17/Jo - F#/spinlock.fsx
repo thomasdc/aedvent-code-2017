@@ -12,6 +12,7 @@ let insertInto index number list =
     before @ [number] @ after
 
 let insertNumber step state number = 
+    if number % 1000 = 0 then printfn "Inserting %d" number
     let length = List.length state.Buffer
     let newLocation = ((state.Location + step) % length) + 1
     { Location = newLocation; Buffer = insertInto newLocation number state.Buffer}
