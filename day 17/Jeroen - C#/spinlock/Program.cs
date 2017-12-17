@@ -5,17 +5,13 @@ class Program
 {
     static void Main(string[] args)
     {
+        const int input = 377;
         Run(() =>
         {
-            var result = Spinlock.Find(377, 2017);
+            var result = Spinlock.Find(input, 2017);
             return result.buffer[result.index + 1];
         });
-        Run(() =>
-        {
-            var result = Spinlock.Find(3, 2017);
-            return result.buffer[1];
-        });
-        Run(() => Spinlock.FindFast(377, 50_000_000));
+        Run(() => Spinlock.FindFast(input, 50_000_000));
     }
 
     static void Run<T>(Func<T> f)

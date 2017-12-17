@@ -13,7 +13,8 @@ public class Specs
     [Fact]
     public void Test2()
     {
-        Assert.Equal(1226, Spinlock.FindFast(3, 2017));
+        var result = Spinlock.Find(3, 2017);
+        Assert.Equal(result.buffer[1], Spinlock.FindFast(3, 2017));
     }
 
 
