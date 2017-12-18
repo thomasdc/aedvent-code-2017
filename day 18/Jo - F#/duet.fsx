@@ -18,7 +18,7 @@ type Instruction =
     | Jgz of (Value * Value)
 
 type State = { LastSoundPlayed : int option; Recovered : int Option; Pointer : int; Registers : Registers }
-let init = { LastSoundPlayed = None; Recovered = None; Pointer = 0; Registers = ['a'..'z'] |> List.map (fun r -> (RegisterName r,0)) |> Map.ofList }
+let init = { LastSoundPlayed = None; Recovered = None; Pointer = 0; Registers = Map.empty }
 
 let split (delims : string array) (text : string) = 
     text.Split(delims, System.StringSplitOptions.RemoveEmptyEntries) 
@@ -53,7 +53,8 @@ let parse instructions =
 
 let getRegisterValue register (registers : Registers) =
     registers
-    |> Map.find register
+    |> Map.tryFind register
+    |> (fun o -> defaultArg o 0)
 
 let getValue v registers = 
     match v with
