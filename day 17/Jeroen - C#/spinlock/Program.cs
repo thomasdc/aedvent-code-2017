@@ -5,9 +5,15 @@ class Program
 {
     static void Main(string[] args)
     {
-        Run(() => 0);
+        const int input = 377;
+        Run(() =>
+        {
+            var result = Spinlock.Find(input, 2017);
+            return result.buffer[result.index + 1];
+        });
+        Run(() => Spinlock.FindFast(input, 50_000_000));
     }
-    
+
     static void Run<T>(Func<T> f)
     {
         var sw = Stopwatch.StartNew();
