@@ -109,10 +109,14 @@ func main() {
 	go prog0.run(instructions)
 	go prog1.run(instructions)
 
-	go func(){ for {<-snd0} }() //consume snd0
+	go func(){ 
+		for _, ok := <-snd0 ; ok ; _,ok = <-snd0 {} //consume snd0
+	}() 
 
-	//writ out all snd1 values => last one is the correct one
-	for { fmt.Println(<-snd1) }
+	//write out all snd1 values => last one is the correct one
+	for val, ok := <-snd1 ; ok ; val,ok = <-snd1 {
+		fmt.Println(val)
+	}
 }
 
 func parseInstructions(input string) *[]string{
