@@ -2,8 +2,8 @@
 open Swensen.Unquote
 
 type RegisterName = RegisterName of char
-type Registers = Map<RegisterName, int>
-type Value = | FromRegister of RegisterName | RawValue of int
+type Registers = Map<RegisterName, int64>
+type Value = | FromRegister of RegisterName | RawValue of int64
 let registerName = RegisterName
 let registerValue r = FromRegister <| RegisterName r
 let integerValue i = RawValue i
@@ -17,8 +17,8 @@ type Instruction =
     | Rcv of RegisterName
     | Jgz of (Value * Value)
 
-type State = { LastSoundPlayed : int option; Recovered : int Option; Pointer : int; Registers : Registers }
-let init = { LastSoundPlayed = None; Recovered = None; Pointer = 0; Registers = Map.empty }
+type State = { LastSoundPlayed : int64 option; Recovered : int64 option; Pointer : int64; Registers : Registers }
+let init = { LastSoundPlayed = None; Recovered = None; Pointer = 0L; Registers = Map.empty }
 
 let split (delims : string array) (text : string) = 
     text.Split(delims, System.StringSplitOptions.RemoveEmptyEntries) 
@@ -28,7 +28,7 @@ let tryParseInt text =
     text
     |> Seq.map string
     |> String.concat ""
-    |> System.Int32.TryParse
+    |> System.Int64.TryParse
 
 let parseValue (text : char list) = 
     match tryParseInt text with
@@ -54,7 +54,7 @@ let parse instructions =
 let getRegisterValue register (registers : Registers) =
     registers
     |> Map.tryFind register
-    |> (fun o -> defaultArg o 0)
+    |> (fun o -> defaultArg o 0L)
 
 let getValue v registers = 
     match v with
@@ -74,7 +74,7 @@ let set reg value state =
     let v = getValue value state.Registers
     state
     |> setValue reg v
-    |> incrementPointer 1
+    |> incrementPointer 1L
 
 let snd reg state = 
     let sound = 
@@ -82,7 +82,7 @@ let snd reg state =
         | FromRegister registerName -> getRegisterValue registerName state.Registers
         | RawValue rawValue -> rawValue
     { state with LastSoundPlayed = Some sound}
-    |> incrementPointer 1
+    |> incrementPointer 1L
 
 let apply operator reg value state = 
     let oldValue = getRegisterValue reg state.Registers
@@ -90,7 +90,7 @@ let apply operator reg value state =
     let newValue = operator oldValue v
     state 
     |> setValue reg newValue
-    |> incrementPointer 1
+    |> incrementPointer 1L
 
 let add = apply (+)
 let mul = apply (*)
@@ -98,22 +98,22 @@ let modulo = apply (%)
 
 let rcv registerName state = 
     let v = getRegisterValue registerName state.Registers
-    if v = 0 then
+    if v = 0L then
         state
-        |> incrementPointer 1
+        |> incrementPointer 1L
     else
         {state with Recovered = state.LastSoundPlayed}
-        |> incrementPointer 1
+        |> incrementPointer 1L
 
 let jgz cond offset state =
     let v = getValue cond state.Registers
-    if v > 0 then
+    if v > 0L then
         let offsetV = getValue offset state.Registers
         state
         |> incrementPointer offsetV
     else
         state
-        |> incrementPointer 1
+        |> incrementPointer 1L
 
 let runInstruction instruction state = 
     match instruction with
@@ -129,8 +129,8 @@ let print state =
     let registers =
         state.Registers
         |> Map.toList
-        |> List.map (fun (RegisterName r,v) -> sprintf "%A,%d" r v)
-        |> String.concat ""
+        |> List.map (fun (RegisterName r,v) -> sprintf "(%A,%d)" r v)
+        |> String.concat ";"
     sprintf 
         "Pointer: %d, LastPlayed: %A, Recovered: %A, Registers: %s" 
         state.Pointer 
@@ -139,12 +139,12 @@ let print state =
         registers
 
 let rec run instructions state =
-    let l = instructions |> Seq.length
-    if state.Pointer < 0 || state.Pointer >= l then
+    let l = instructions |> Seq.length |> int64
+    if state.Pointer < 0L || state.Pointer >= l then
         state
     else
-        let i = instructions |> List.item state.Pointer
-        printfn "Executing %A on %s" i (print state)
+        let i = instructions |> List.item (int state.Pointer)
+        //printfn "Executing %A on %s" i (print state)
         let newState = runInstruction i state
         match i with
         | Rcv _ when Option.isSome newState.Recovered -> newState
@@ -152,44 +152,44 @@ let rec run instructions state =
 
 printf "Testing..."
 
-test <@ parse "snd 1" = [Snd <| integerValue 1] @>
+test <@ parse "snd 1" = [Snd <| integerValue 1L] @>
 test <@ parse "snd z" = [Snd <| registerValue 'z'] @>
-test <@ parse "set a 3" = [Set <| (registerName 'a', integerValue 3)] @>
+test <@ parse "set a 3" = [Set <| (registerName 'a', integerValue 3L)] @>
 test <@ parse "set a c" = [Set <| (registerName 'a', registerValue 'c')] @>
-test <@ parse "add g 331" = [Add <| (registerName 'g', integerValue 331)] @>
+test <@ parse "add g 331" = [Add <| (registerName 'g', integerValue 331L)] @>
 test <@ parse "add g x" = [Add <| (registerName 'g', registerValue 'x')] @>
-test <@ parse "mul q -28" = [Mul <| (registerName 'q', integerValue -28)] @>
+test <@ parse "mul q -28" = [Mul <| (registerName 'q', integerValue -28L)] @>
 test <@ parse "mul r t" = [Mul <| (registerName 'r', registerValue 't')] @>
-test <@ parse "mod z 89" = [Mod <| (registerName 'z', integerValue 89)] @>
+test <@ parse "mod z 89" = [Mod <| (registerName 'z', integerValue 89L)] @>
 test <@ parse "mod v p" = [Mod <| (registerName 'v', registerValue 'p')] @>
 test <@ parse "rcv z" = [Rcv <| registerName 'z'] @>
-test <@ parse "jgz 1 2" = [Jgz <| (integerValue 1, integerValue 2)] @>
+test <@ parse "jgz 1 2" = [Jgz <| (integerValue 1L, integerValue 2L)] @>
 test <@ parse "jgz i b" = [Jgz <| (registerValue 'i', registerValue 'b')] @>
-test <@ parse "jgz k 0" = [Jgz <| (registerValue 'k', integerValue 0)] @>
+test <@ parse "jgz k 0" = [Jgz <| (registerValue 'k', integerValue 0L)] @>
 test <@ parse "snd a\nsnd b" = [Snd <| registerValue 'a'; Snd <| registerValue 'b'] @>
 
-test <@ (run [Set (registerName 'a', integerValue 10)] init).Registers |> Map.find (RegisterName 'a') = 10 @>
-test <@ (run [Set (registerName 'a', integerValue 10); Set (registerName 'b', registerValue 'a')] init).Registers |> Map.find (RegisterName 'b') = 10 @>
+test <@ (run [Set (registerName 'a', integerValue 10L)] init).Registers |> Map.find (RegisterName 'a') = 10L @>
+test <@ (run [Set (registerName 'a', integerValue 10L); Set (registerName 'b', registerValue 'a')] init).Registers |> Map.find (RegisterName 'b') = 10L @>
 
-test <@ (run [Set (registerName 'a', integerValue 3); Snd <| registerValue 'a'] init).LastSoundPlayed = Some 3 @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Snd <| registerValue 'a'] init).LastSoundPlayed = Some 3L @>
 
-test <@ (run [Set (registerName 'a', integerValue 3); Add <| (registerName 'a', integerValue 2)] init).Registers |> Map.find (RegisterName 'a') = 5 @>
-test <@ (run [Set (registerName 'a', integerValue 3); Set (registerName 'b', integerValue 2); Add <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 5 @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Add <| (registerName 'a', integerValue 2L)] init).Registers |> Map.find (RegisterName 'a') = 5L @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Set (registerName 'b', integerValue 2L); Add <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 5L @>
 
-test <@ (run [Set (registerName 'a', integerValue 3); Mul <| (registerName 'a', integerValue 2)] init).Registers |> Map.find (RegisterName 'a') = 6 @>
-test <@ (run [Set (registerName 'a', integerValue 3); Set (registerName 'b', integerValue 2); Mul <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 6 @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Mul <| (registerName 'a', integerValue 2L)] init).Registers |> Map.find (RegisterName 'a') = 6L @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Set (registerName 'b', integerValue 2L); Mul <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 6L @>
 
-test <@ (run [Set (registerName 'a', integerValue 5); Mod <| (registerName 'a', integerValue 2)] init).Registers |> Map.find (RegisterName 'a') = 1 @>
-test <@ (run [Set (registerName 'a', integerValue 5); Set (registerName 'b', integerValue 2); Mod <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 1 @>
+test <@ (run [Set (registerName 'a', integerValue 5L); Mod <| (registerName 'a', integerValue 2L)] init).Registers |> Map.find (RegisterName 'a') = 1L @>
+test <@ (run [Set (registerName 'a', integerValue 5L); Set (registerName 'b', integerValue 2L); Mod <| (registerName 'a', registerValue 'b')] init).Registers |> Map.find (RegisterName 'a') = 1L @>
 
 test <@ (run [Rcv <| registerName 'a'] init).Recovered = None @>
-test <@ (run [Set (registerName 'a', integerValue 1); Rcv <| registerName 'a'] init).Recovered = None @>
-test <@ (run [Set (registerName 'a', integerValue 1); Snd <| integerValue 1337; Rcv <| registerName 'a'] init).Recovered = Some 1337 @>
+test <@ (run [Set (registerName 'a', integerValue 1L); Rcv <| registerName 'a'] init).Recovered = None @>
+test <@ (run [Set (registerName 'a', integerValue 1L); Snd <| integerValue 1337L; Rcv <| registerName 'a'] init).Recovered = Some 1337L @>
 
-test <@ (run [Jgz <| (integerValue 1, integerValue 3)] init).Pointer = 3 @>
-test <@ (run [Set (registerName 'a', integerValue 3); Jgz <| (integerValue 1, registerValue 'a')] init).Pointer = 4 @>
-test <@ (run [Set (registerName 'a', integerValue 1); Jgz <| (registerValue 'a', integerValue 3)] init).Pointer = 4 @>
-test <@ (run [Set (registerName 'a', integerValue 1);  Set (registerName 'b', integerValue 3); Jgz <| (registerValue 'a', registerValue 'b')] init).Pointer = 5 @>
+test <@ (run [Jgz <| (integerValue 1L, integerValue 3L)] init).Pointer = 3L @>
+test <@ (run [Set (registerName 'a', integerValue 3L); Jgz <| (integerValue 1L, registerValue 'a')] init).Pointer = 4L @>
+test <@ (run [Set (registerName 'a', integerValue 1L); Jgz <| (registerValue 'a', integerValue 3L)] init).Pointer = 4L @>
+test <@ (run [Set (registerName 'a', integerValue 1L);  Set (registerName 'b', integerValue 3L); Jgz <| (registerValue 'a', registerValue 'b')] init).Pointer = 5L @>
 printfn "Done"
 
 let example = "set a 1
@@ -203,8 +203,8 @@ jgz a -1
 set a 1
 jgz a -2"
 
-test <@ Some 4 = (run (example |> parse) init).Recovered @>
+test <@ Some 4L = (run (example |> parse) init).Recovered @>
+
 let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt" )
 let instructions = input |> parse
-
 let part1 = run instructions init
