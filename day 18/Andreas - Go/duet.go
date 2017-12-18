@@ -59,7 +59,6 @@ func main() {
 	instructions := *parseInstructions(input)
 	pos := 0
 
-	i := 0
 	for pos < len(instructions) && pos >= 0 {
 
 		instr := strings.Split(instructions[pos], " ")
@@ -84,7 +83,6 @@ func main() {
 		
 			
 		pos++
-		i++
 		fmt.Println(instr, registers, lastValue, pos)
 	}
 
