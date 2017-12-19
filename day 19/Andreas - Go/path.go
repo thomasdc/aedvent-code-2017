@@ -15,15 +15,14 @@ type walker struct{
 func main() {
 	//input := readInput("testInput.txt")
 	input := readInput("input.txt")
-	//fmt.Println(input)
 
-	res := ""
+	res, ctr := "", 1 //start pos => already 1 step
 	walker := new(input)
 	char, finish := walker.step()
 	for ; !finish ; char, finish = walker.step() {
 		
 		res += char
-
+		ctr++
 		/*fmt.Println( string(char), 
 			finish, 
 			walker.y , walker.x, 
@@ -34,6 +33,7 @@ func main() {
 	res += char
 
 	fmt.Println(res)
+	fmt.Println(ctr)
 }
 
 func readInput(fname string) string {
