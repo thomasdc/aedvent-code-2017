@@ -1,6 +1,3 @@
-#r @"..\..\dependencies\Jo\.paket\packages\Unquote\lib\net45\Unquote.dll"
-open Swensen.Unquote
-
 type Element =
     | Path
     | Corner
@@ -8,7 +5,7 @@ type Element =
 type Location = int * int
 type Direction = Up| Down| Left |Right
 
-type State = { Location : Location; Facing : Direction; Encountered : char list }
+type State = { Location : Location; Facing : Direction; Encountered : char list; NumberOfSteps : int }
 
 let parseElement =
     function
@@ -84,15 +81,30 @@ let takeStep maze state =
     elementAtNext
     |> Option.map 
         (function 
-            | Path -> { state with Location = next }
-            | Letter l -> {state with Location = next; Encountered = state.Encountered @ [l]}
-            | Corner -> {state with Location = next; Facing = turn next state.Facing maze})
+            | Path -> { state with Location = next; NumberOfSteps = state.NumberOfSteps + 1 }
+            | Letter l -> {state with Location = next; Encountered = state.Encountered @ [l]; NumberOfSteps = state.NumberOfSteps + 1}
+            | Corner -> {state with Location = next; Facing = turn next state.Facing maze; NumberOfSteps = state.NumberOfSteps + 1})
 
 let rec run maze state =
     let next = takeStep maze state
     match next with
     | None -> state
     | Some n -> run maze n
+
+let solve text = 
+    let maze = parse text
+    let start = findStart maze
+    let init = {Location = start; Encountered = []; Facing = Down; NumberOfSteps = 1}
+    let completeRun = run maze init
+    completeRun.Encountered |> List.map string |> String.concat ""
+
+let solve2 text = 
+    let maze = parse text
+    let start = findStart maze
+    let init = {Location = start; Encountered = []; Facing = Down; NumberOfSteps = 1}
+    let completeRun = run maze init
+    completeRun.NumberOfSteps
+
 
 let example = @"     |          
      |  +--+    
@@ -103,14 +115,9 @@ let example = @"     |
 
 "
 
-let part1 text = 
-    let maze = parse text
-    let start = findStart maze
-    let init = {Location = start; Encountered = []; Facing = Down}
-    let completeRun = run maze init
-    (completeRun).Encountered |> List.map string |> String.concat ""
-
-part1 example
+solve example
+solve2 example
 
 let input = System.IO.File.ReadAllText( __SOURCE_DIRECTORY__ + "\input.txt")
-part1 input
+solve input
+solve2 input
