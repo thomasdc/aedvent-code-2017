@@ -36,13 +36,11 @@ func main() {
 	input := readInput("input.txt")
 	particles := *(parseInput(input))
 
-	for i, p := range particles {
-		fmt.Println(i, " => ", p, p.distanceOrigin(), p.accelerationOrigin())
-	}
+	//for i, p := range particles { fmt.Println(i, " => ", p, p.distanceOrigin(), p.accelerationOrigin()) }
 
 	min := 0
 	for i, p := range particles {
-		if particles[min].accelerationOrigin() > p.accelerationOrigin() { min = i	}
+		if particles[min].accelerationOrigin() > p.accelerationOrigin() { min = i }
 	}
 	fmt.Println(min)
 }
