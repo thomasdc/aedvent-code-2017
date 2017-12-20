@@ -31,17 +31,50 @@ func abs(i int) int{
 	if i < 0 { return -i }
 	return i
 }
+func (p *particle) SameLocation(q *particle) bool{
+	return p.px == q.px && p.py == q.py && p.pz == q.pz
+}
 
 func main() {
 	input := readInput("input.txt")
 	particles := *(parseInput(input))
 
-
+	//part 1
 	min := 0
 	for i, p := range particles {
 		if (*particles[min]).accelerationOrigin() > (*p).accelerationOrigin() { min = i }
 	}
 	fmt.Println(min)
+
+	//part2
+	//remove colissions at start 
+	for kp, p := range particles {
+		for kq, q := range particles {
+			if kp == kq { //cannot collide with own particle
+				continue 
+			} else if p.SameLocation(q){ 
+				delete(particles, kq)
+				delete(particles, kp)
+			}
+		}
+	}
+	for step := 0 ; step < 1000 ; step++ {
+		//do steps
+		for _, p := range particles { p.step() }
+
+		//remove colissions
+		for kp, p := range particles {
+			for kq, q := range particles {
+				if kp == kq { //cannot collide with own particle
+					continue 
+				} else if p.SameLocation(q){ 
+					delete(particles, kq)
+					delete(particles, kp)
+				}
+			}
+		}
+	}
+	fmt.Println( len(particles) )
 }
 
 func readInput(fname string) string {
