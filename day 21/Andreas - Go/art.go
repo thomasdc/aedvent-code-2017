@@ -15,18 +15,30 @@ var rules = `../.# => ##./#../...
 
 
 func main() {
-/*	image := NewPainting(sample, rules)
+/*	
+	//sample
+	image := NewPainting(sample, rules)
 	image.print()
 
 	image.evolve() ; image.print()
 	image.evolve() ; image.print()
 	fmt.Println(image.countOn())
 */
+
+/*	//part1
 	realRules := readInput("rules.txt")
 	image := NewPainting(sample, realRules)
-
 	for i := 0 ; i < 5 ; i++ { image.evolve() }
 	fmt.Println( image.countOn() )
+*/
+
+	//part 2
+	realRules := readInput("rules.txt")
+	image := NewPainting(sample, realRules)
+	for i := 0 ; i < 18 ; i++ { image.evolve() }
+	fmt.Println( image.countOn() )
+
+
 }
 
 type Painting struct{
