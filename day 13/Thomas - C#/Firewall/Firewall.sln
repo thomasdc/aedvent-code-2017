@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firewall", "Firewall.csproj", "{89952EF6-391F-487D-A052-ED9A0E33968F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firewall", "Firewall\Firewall.csproj", "{1F099379-38BC-44F0-87DE-F3617F22BDD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{89952EF6-391F-487D-A052-ED9A0E33968F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89952EF6-391F-487D-A052-ED9A0E33968F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89952EF6-391F-487D-A052-ED9A0E33968F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89952EF6-391F-487D-A052-ED9A0E33968F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F099379-38BC-44F0-87DE-F3617F22BDD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F099379-38BC-44F0-87DE-F3617F22BDD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F099379-38BC-44F0-87DE-F3617F22BDD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F099379-38BC-44F0-87DE-F3617F22BDD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
