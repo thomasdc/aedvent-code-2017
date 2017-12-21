@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Defragmentation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Part1("ljoxqyyw"));
+            Console.WriteLine(Part2("ljoxqyyw"));
         }
 
         private static int Part1(string input)
@@ -21,9 +20,95 @@ namespace Defragmentation
                     .Sum(NumberOfBitsTurnedOn));
         }
 
+        private static int Part2(string input)
+        {
+            var cells = ExtractLinkedCells(input);
+            var groups = new List<HashSet<Cell>>();
+            foreach (var cell in cells)
+            {
+                if (!groups.Any(_ => _.Contains(cell)))
+                {
+                    var group = ExpandGroup(cell, new HashSet<Cell>());
+                    groups.Add(group);
+                }
+            }
+            
+            return groups.Count;
+        }
+
+        private static HashSet<Cell> ExpandGroup(Cell cell, HashSet<Cell> groupUntilNow)
+        {
+            if (groupUntilNow.Contains(cell))
+            {
+                return groupUntilNow;
+            }
+
+            groupUntilNow.Add(cell);
+
+            foreach (var linkedCell in cell.AdjacentCells)
+            {
+                groupUntilNow.UnionWith(ExpandGroup(linkedCell, groupUntilNow));
+            }
+
+            return groupUntilNow;
+        }
+
+        private static bool AreNeighbours(Cell currentCell, Cell _)
+        {
+            return Math.Abs(currentCell.Row - _.Row) + Math.Abs(currentCell.Column - _.Column) == 1;
+        }
+
+        private static Cell[] ExtractLinkedCells(string input)
+        {
+            var matrix = ExtractMatrix(input);
+            const int matrixSize = 128;
+            var processedCells = new List<Cell>();
+            for (var row = 0; row < matrixSize; row++)
+            {
+                for (var column = 0; column < matrixSize; column++)
+                {
+                    if (matrix[row][column])
+                    {
+                        var currentCell = new Cell(row, column);
+                        foreach (var neighbouringCell in processedCells.Where(_ => AreNeighbours(currentCell, _)))
+                        {
+                            currentCell.LinkWith(neighbouringCell);
+                        }
+                        
+                        processedCells.Add(currentCell);
+                    }
+                }
+            }
+
+            return processedCells.ToArray();
+        }
+
+        private static bool[][] ExtractMatrix(string input)
+        {
+            var matrix = new List<IList<bool>>();
+            for (var rowIndex = 0; rowIndex < 128; rowIndex++)
+            {
+                var row = new List<bool>();
+                var knotHash = KnotHash($"{input}-{rowIndex}");
+                for (var group = 0; group < 32; group++)
+                {
+                    row.AddRange(ExtractBits(int.Parse(knotHash[group].ToString(), NumberStyles.HexNumber)).Reverse());
+                }
+                
+                matrix.Add(row);
+            }
+            
+            return matrix.Select(_ => _.ToArray()).ToArray();
+        }
+
+        private static IEnumerable<bool> ExtractBits(int input)
+        {
+            return Enumerable.Range(0, 4).Select(shift => (input >> shift) % 2 == 1);
+        }
+
         private static int NumberOfBitsTurnedOn(int input)
         {
-            return Enumerable.Range(0, 4).Count(shift => (input >> shift) % 2 == 1);
+            return ExtractBits(input).Count(_ => _);
         }
         
         private static string KnotHash(string input)
@@ -76,6 +161,26 @@ namespace Defragmentation
         private static string Densify(int[] input)
         {
             return string.Join("", input.Select(_ => _.ToString("X2"))).ToLowerInvariant();
+        }
+
+        private class Cell
+        {
+            public int Row { get; }
+            public int Column { get; }
+            public IList<Cell> AdjacentCells { get; }
+
+            public Cell(int row, int column)
+            {
+                Row = row;
+                Column = column;
+                AdjacentCells = new List<Cell>();
+            }
+
+            public void LinkWith(Cell cell)
+            {
+                AdjacentCells.Add(cell);
+                cell.AdjacentCells.Add(this);
+            }
         }
     }
 }
