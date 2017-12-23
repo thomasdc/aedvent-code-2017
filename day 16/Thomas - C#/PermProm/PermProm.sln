@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PermProm", "PermProm.csproj", "{9CE8A8B8-DD49-49D4-A980-1912A7541F2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PermProm", "PermProm\PermProm.csproj", "{781A3286-D31E-4388-A80D-12CCCE204D7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PermProm.Tests", "PermProm.Tests\PermProm.Tests.csproj", "{192D995A-23C1-41F3-A403-CEF91A5FAD45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9CE8A8B8-DD49-49D4-A980-1912A7541F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CE8A8B8-DD49-49D4-A980-1912A7541F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CE8A8B8-DD49-49D4-A980-1912A7541F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CE8A8B8-DD49-49D4-A980-1912A7541F2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{781A3286-D31E-4388-A80D-12CCCE204D7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{781A3286-D31E-4388-A80D-12CCCE204D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{781A3286-D31E-4388-A80D-12CCCE204D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{781A3286-D31E-4388-A80D-12CCCE204D7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{192D995A-23C1-41F3-A403-CEF91A5FAD45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{192D995A-23C1-41F3-A403-CEF91A5FAD45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{192D995A-23C1-41F3-A403-CEF91A5FAD45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{192D995A-23C1-41F3-A403-CEF91A5FAD45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
