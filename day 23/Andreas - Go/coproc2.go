@@ -31,7 +31,3 @@ func IsPrime(value int) bool {
 
 	return value % div != 0
 }
-
-
-
-//between 597 and 9954 => 905
