@@ -36,6 +36,9 @@ func (p *Path) pathToValue() int{
 	}
 	return res
 }
+func (p *Path) pathToLength() int{
+	return len(*p)
+}
 
 type Todo struct{
 	start int
@@ -69,16 +72,8 @@ func main() {
 		},
 		magnets,
 	)
-/*
-	for i, p := range *paths{
-		fmt.Print(i, " => 0")
-		for _, m := range p {
-			fmt.Print(" -> ", m)
-		}
-		fmt.Println()
-	}
-*/
 
+	//part1
 	maxI, maxVal := 0, (*paths)[0].pathToValue()
 	for i, p := range *paths {
 		if val := p.pathToValue() ; val > maxVal { 
@@ -87,13 +82,34 @@ func main() {
 	}
 
 	fmt.Println(maxI, maxVal)
-	fmt.Print("0")
-	for _, m := range (*paths)[maxI] {
-		fmt.Print(" -> ", m)
-	}
+	fmt.Print("0") ; for _, m := range (*paths)[maxI] { fmt.Print(" -> ", m) } 
+	fmt.Println()
 	fmt.Println()
 	
 
+	//part2
+	maxI, maxLen, maxVal := 0, (*paths)[0].pathToLength(), (*paths)[0].pathToValue()
+	
+	for i, p := range *paths {
+		
+		length := p.pathToLength()
+		val    := p.pathToValue()
+		if length > maxLen{
+			maxI = i
+			maxLen = length
+			maxVal = val
+		} else if length == maxLen {
+			if val > maxVal {
+				maxI = i
+				maxVal = val
+			}
+		}		
+	}
+
+	fmt.Println(maxI, maxVal, maxLen)
+	fmt.Print("0") ; for _, m := range (*paths)[maxI] { fmt.Print(" -> ", m) }
+	fmt.Println()
+	
 
 }
 
