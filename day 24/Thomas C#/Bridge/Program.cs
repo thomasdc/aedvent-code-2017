@@ -9,7 +9,7 @@ namespace Bridge
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Part1(Parse("input.txt").ToArray()));
+            Console.WriteLine(Part2(Parse("input.txt").ToArray()));
             Console.ReadLine();
         }
 
@@ -24,7 +24,7 @@ namespace Bridge
 
         public static int Part1(Component[] components)
         {
-            var initialPort = new Port(null, 0);
+            var initialPort = 0;
             var bridges = EnumerateBridges(initialPort, components, new Stack<Component>());
             /*foreach (var bridge in bridges)
             {
@@ -34,14 +34,21 @@ namespace Bridge
             return SumOfStrength(bridges.OrderByDescending(SumOfStrength).First());
         }
 
+        public static int Part2(Component[] components)
+        {
+            var initialPort = 0;
+            var bridges = EnumerateBridges(initialPort, components, new Stack<Component>());
+            return SumOfStrength(bridges.OrderByDescending(_ => _.Length).ThenByDescending(SumOfStrength).First());
+        }
+
         private static int SumOfStrength(IList<Component> bridge)
         {
             return bridge.Sum(component => component.Strength);
         }
 
-        private static IEnumerable<Component[]> EnumerateBridges(Port portToMatch, IList<Component> unvisitedNodes, Stack<Component> currentBranch)
+        private static IEnumerable<Component[]> EnumerateBridges(int portToMatch, IList<Component> unvisitedNodes, Stack<Component> currentBranch)
         {
-            Port nextPortToMatch = null;
+            var nextPortToMatch = -1;
             foreach (var matchingComponent in unvisitedNodes.Where(_ => _.Match(portToMatch, out nextPortToMatch)))
             {
                 currentBranch.Push(matchingComponent);
@@ -59,21 +66,21 @@ namespace Bridge
 
         internal class Component
         {
-            public Port[] Ports { get; }
-            public int Strength => Ports.Sum(_ => _.PinType);
+            public int[] Ports { get; }
+            public int Strength => Ports.Sum(_ => _);
 
             public Component(int portA, int portB)
             {
-                Ports = new[] {new Port(this, portA), new Port(this, portB)};
+                Ports = new[] {portA, portB};
             }
 
-            public bool Match(Port other, out Port nextPortToMatch)
+            public bool Match(int otherPort, out int nextPortToMatch)
             {
-                nextPortToMatch = null;
+                nextPortToMatch = -1;
                 for (var i = 0; i < 2; i++)
                 {
                     var port = Ports[i];
-                    if (port.Match(other))
+                    if (port == otherPort)
                     {
                         nextPortToMatch = Ports[(i + 1) % 2];
                         return true;
@@ -81,38 +88,6 @@ namespace Bridge
                 }
 
                 return false;
-            }
-
-            public bool IsStrongerThan(Component other)
-            {
-                return Strength > other.Strength;
-            }
-        }
-
-        internal class Port
-        {
-            public int PinType { get; }
-            public Component Component { get; }
-            public Port LinkedToPort { get; private set; }
-
-            public Port(Component component, int pinType)
-            {
-                Component = component;
-                PinType = pinType;
-            }
-
-            public bool Match(Port other)
-            {
-                if (PinType != other.PinType) return false;
-                LinkedToPort = other;
-                other.LinkedToPort = this;
-                return true;
-            }
-            
-            public void Unlink()
-            {
-                LinkedToPort.LinkedToPort = null;
-                LinkedToPort = null;
             }
         }
     }
