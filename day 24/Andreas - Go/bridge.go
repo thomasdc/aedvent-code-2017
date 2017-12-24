@@ -20,6 +20,41 @@ func (m *Magnet) ToStringToFrom() string {
 	return strconv.Itoa(m.to) + "/" + strconv.Itoa(m.from)
 }
 
+type Path []Magnet
+func (p *Path) ToString() *string { //hash the path to some unique key to keep track of seen paths
+	res := ""
+	for _, m := range *p {
+		res += "{" + strconv.Itoa(m.from) + "-" + strconv.Itoa(m.to) + "}"
+	}
+	return &res
+}
+func (p *Path) pathToValue() int{
+	res := 0
+	for _, m := range *p {
+		res += m.from
+		res += m.to
+	}
+	return res
+}
+
+type Todo struct{
+	start int
+	path Path
+	used []bool
+}
+type stack []*Todo
+func (s *stack) pop() *Todo{
+	l := len(*s)
+	if l == 0 {
+		return nil
+	} else { 
+		c := (*s)[l-1]
+		*s = (*s)[:l-1] 
+		return c
+	}
+}
+func (s *stack) push(c *Todo) { *s = append(*s, c) }
+
 
 
 func main() {
@@ -44,9 +79,9 @@ func main() {
 	}
 */
 
-	maxI, maxVal := 0, pathToValue( &(*paths)[0] )
+	maxI, maxVal := 0, (*paths)[0].pathToValue()
 	for i, p := range *paths {
-		if val := pathToValue(&p) ; val > maxVal { 
+		if val := p.pathToValue() ; val > maxVal { 
 			maxVal = val ; maxI = i 
 		}
 	}
@@ -62,28 +97,9 @@ func main() {
 
 }
 
-func pathToString(p *[]Magnet) *string{
-	res := ""
-	for _, m := range *p {
-		res += "{" + strconv.Itoa(m.from) + "-" + strconv.Itoa(m.to) + "}"
-	}
-	return &res
-}
-func pathToValue(p *[]Magnet) int{
-	res := 0
-	for _, m := range *p {
-		res += m.from
-		res += m.to
-	}
-	return res
-}
+func searchPath(start *Todo, magnets *[]Magnet) *[]Path{
 
-
-
-
-func searchPath(start *Todo, magnets *[]Magnet) *[][]Magnet{
-
-	paths := [][]Magnet{}
+	paths := []Path{}
 	todos := stack{start}
 	seen  := map[string]bool{} //keep track of already discovered paths
 	
@@ -98,15 +114,15 @@ func searchPath(start *Todo, magnets *[]Magnet) *[][]Magnet{
 			if !conFrom && !conTo { continue }
 
 			//create copies!
-			newPath := make([]Magnet, len(td.path), len(td.path)+1)
+			newPath := make(Path, len(td.path), len(td.path)+1)
 			for j, v := range td.path { newPath[j] = v }
 			newPath = append(newPath, m)
 
-			pathString := *pathToString(&newPath)
-			if seen[pathString]{ continue }
+			pathString := newPath.ToString()
+			if seen[*pathString]{ continue }
 
 			paths = append(paths, newPath)
-			seen[pathString] = true
+			seen[*pathString] = true
 
 			newUsed := make([]bool, len(td.used))
 			for j, b := range td.used { newUsed[j] = b }
@@ -136,23 +152,6 @@ func searchPath(start *Todo, magnets *[]Magnet) *[][]Magnet{
 	return &paths
 }
 
-type Todo struct{
-	start int
-	path []Magnet
-	used []bool
-}
-type stack []*Todo
-func (s *stack) pop() *Todo{
-	l := len(*s)
-	if l == 0 {
-		return nil
-	} else { 
-		c := (*s)[l-1]
-		*s = (*s)[:l-1] 
-		return c
-	}
-}
-func (s *stack) push(c *Todo) { *s = append(*s, c) }
 
 func parseInput(s string) *[]Magnet {
 	lines := strings.Split(s, "\n")
