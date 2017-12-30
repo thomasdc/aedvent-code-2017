@@ -45,19 +45,11 @@ cntj (57)
         public void TestPart2()
         {
             var tree = Tree.Parse(SampleInput);
+            
 
-            var invalidNode = (
-                from n in tree.AllNodes()
-                where !n.HasValidWeight && n.Children.All(x => x.HasValidWeight)
-                from child in n.Children
-                group child by child.Weight into g
-                where g.Count() == 1
-                select g.Single()
-            ).SingleOrDefault();
+            var invalidNode =tree.FindInvalidNode();
+            var result = invalidNode.RebalancingWeight;
 
-            var sibling = invalidNode.Siblings.First();
-            var difference = invalidNode.Weight - sibling.Weight;
-            var result = invalidNode.PrivateWeight - difference;
             Assert.Equal("ugml", invalidNode.Label);
             Assert.Equal(60, result);
         }

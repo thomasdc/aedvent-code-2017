@@ -8,28 +8,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        Run(() =>
-        {
+        var components = (
+            from line in File.ReadLines("input.txt")
+            select Component.Parse(line)
+        ).ToImmutableList();
 
-            var components = (
-                from line in File.ReadLines("input.txt")
-                select Component.Parse(line) into component
-                orderby component.Smallest
-                select component
-            ).ToImmutableList();
-            return Bridge.Longest(components);
-        });
-        Run(() =>
-        {
-
-            var components = (
-                from line in File.ReadLines("input.txt")
-                select Component.Parse(line) into component
-                orderby component.Smallest
-                select component
-            ).ToImmutableList();
-            return Bridge.Strongest(components);
-        });
+        Run(() => Bridge.Longest(components));
+        Run(() => Bridge.Strongest(components));
     }
 
     static void Run<T>(Func<T> f)

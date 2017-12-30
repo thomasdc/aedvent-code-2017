@@ -8,15 +8,7 @@ namespace Garbage
     {
         static void Main(string[] args)
         {
-            Run(() =>
-                {
-                    using (var streamReader = new StreamReader(File.OpenRead("input.txt")))
-                    {
-                        var result = new GarbageProcessor().Process(streamReader);
-                        return result;
-                    }
-                }
-            );
+            Run(() => new GarbageProcessor().ProcessFile("input.txt"));
         }
 
         static void Run<T>(Func<T> f)

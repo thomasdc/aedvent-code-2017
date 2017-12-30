@@ -7,7 +7,7 @@ namespace Knots
 {
     static class KnotsHash
     {
-        public static string Hash(string input)
+        internal static string Hash(string input)
         {
             var bytes = Encoding.ASCII.GetBytes(input).Concat(new byte[] {17, 31, 73, 47, 23}).ToArray();
             var array = Hash(bytes, 256, 64).ReduceHash().ToArray();
@@ -35,7 +35,7 @@ namespace Knots
         internal static void Step(byte[] result, int index, int l)
         {
             var slice = result.CircularSlice(index, l).Reverse().ToList();
-            for (int i = 0; i < l; i++)
+            for (var i = 0; i < l; i++)
             {
                 result[(index + i) % result.Length] = slice[i];
             }
@@ -43,13 +43,13 @@ namespace Knots
 
         internal static IEnumerable<T> CircularSlice<T>(this T[] input, int index, int length)
         {
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
                 yield return input[(index + i) % input.Length];
         }
 
         internal static IEnumerable<byte> ReduceHash(this byte[] input)
         {
-            for (int i = 0; i < input.Length; i += 16)
+            for (var i = 0; i < input.Length; i += 16)
             {
                 yield return input.Skip(i).Take(16).Aggregate((l, r) => (byte)(l ^ r));
             }

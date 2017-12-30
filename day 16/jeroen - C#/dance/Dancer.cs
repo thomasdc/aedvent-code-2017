@@ -8,7 +8,7 @@ namespace dance
 {
     public class Dancer
     {
-        private readonly List<Func<string, string>> _instructions;
+        private readonly IReadOnlyList<Func<string, string>> _instructions;
 
         public Dancer(TextReader source) => _instructions = source.ReadInstructions().Select(Parse).ToList();
 
@@ -25,7 +25,8 @@ namespace dance
                 case 'x':
                 {
                     var x = Convert.ToInt32(data[0]);
-                    return s => s.Exchange(x, Convert.ToInt32(data[1]));
+                    var y = Convert.ToInt32(data[1]);
+                    return s => s.Exchange(x, y);
                 }
                 case 'p':
                 {

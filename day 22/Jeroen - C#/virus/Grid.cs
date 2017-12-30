@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-enum Direction
-{
-    Up, Down, Left, Right
-}
-
-enum NodeState
-{
-    Clean, Infected, Weakened, Flagged
-}
 
 class Grid
 {
+    enum Direction
+    {
+        Up, Down, Left, Right
+    }
+
+    enum NodeState
+    {
+        Clean, Infected, Weakened, Flagged
+    }
+
     private readonly IDictionary<(int row, int col), NodeState> _infections;
     private readonly (int row, int col) _start;
     private int _nofinfections;
@@ -33,16 +34,11 @@ class Grid
     {
         switch (direction)
         {
-            case Direction.Up:
-                return (--row, col);
-            case Direction.Down:
-                return (++row, col);
-            case Direction.Left:
-                return (row, --col);
-            case Direction.Right:
-                return (row, ++col);
-            default:
-                throw new ArgumentOutOfRangeException();
+            case Direction.Up: return (--row, col);
+            case Direction.Down: return (++row, col);
+            case Direction.Left: return (row, --col);
+            case Direction.Right: return (row, ++col);
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -50,54 +46,34 @@ class Grid
     {
         switch (direction)
         {
-            case Direction.Up:
-                return Direction.Left;
-            case Direction.Down:
-                return Direction.Right;
-            case Direction.Left:
-                return Direction.Down;
-            case Direction.Right:
-                return Direction.Up;
-            default:
-                throw new ArgumentOutOfRangeException();
+            case Direction.Up: return Direction.Left;
+            case Direction.Down: return Direction.Right;
+            case Direction.Left: return Direction.Down;
+            case Direction.Right: return Direction.Up;
+            default: throw new ArgumentOutOfRangeException();
         }
     }
-    public static Direction TurnRight(Direction direction)
+    static Direction TurnRight(Direction direction)
     {
         switch (direction)
         {
-            case Direction.Up:
-                return Direction.Right;
-            case Direction.Down:
-                return Direction.Left;
-            case Direction.Left:
-                return Direction.Up;
-            case Direction.Right:
-                return Direction.Down;
-            default:
-                throw new ArgumentOutOfRangeException();
+            case Direction.Up: return Direction.Right;
+            case Direction.Down: return Direction.Left;
+            case Direction.Left: return Direction.Up;
+            case Direction.Right: return Direction.Down;
+            default: throw new ArgumentOutOfRangeException();
         }
     }
-    public static Direction Reverse(Direction direction)
+    static Direction Reverse(Direction direction)
     {
         switch (direction)
         {
-            case Direction.Up:
-                return Direction.Down;
-            case Direction.Down:
-                return Direction.Up;
-            case Direction.Left:
-                return Direction.Right;
-            case Direction.Right:
-                return Direction.Left;
-            default:
-                throw new ArgumentOutOfRangeException();
+            case Direction.Up: return Direction.Down;
+            case Direction.Down: return Direction.Up;
+            case Direction.Left: return Direction.Right;
+            case Direction.Right: return Direction.Left;
+            default: throw new ArgumentOutOfRangeException();
         }
-    }
-
-    public void Clean((int row, int col) position)
-    {
-        if (_infections.ContainsKey(position)) _infections.Remove(position);
     }
 
     (Direction direction, (int row, int col) position) Visit1(Direction direction, (int row, int col) position)
@@ -123,7 +99,7 @@ class Grid
         position = Step(position.row, position.col, direction);
         return (direction, position);
     }
-    public (Direction direction, (int row, int col) position) Visit2(Direction direction, (int row, int col) position)
+    (Direction direction, (int row, int col) position) Visit2(Direction direction, (int row, int col) position)
     {
         var state = NodeState.Clean;
         if (_infections.TryGetValue(position, out var tmp))

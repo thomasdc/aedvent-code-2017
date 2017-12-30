@@ -19,8 +19,8 @@ public class Specs
                       "set a 1\r\n" +
                       "jgz a -2";
         var cpu = new CPU1();
-        cpu.Run(program.ReadLines().ToArray());
-        Assert.Equal(4, cpu.LastPlayed);
+        var lastPlayed = cpu.Load(program.ReadLines().ToArray()).Run();
+        Assert.Equal(4, lastPlayed);
     }
 }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,13 +15,9 @@ public class CPU2
     private int _instructionPtr;
     private IReadOnlyList<string> _instructions;
 
-    public int Received { get; private set; }
     public int Sent { get; private set; }
 
-    public CPU2(int id, 
-        Queue<long> incoming, 
-        Queue<long> outgoing
-        )
+    public CPU2(int id, Queue<long> incoming, Queue<long> outgoing)
     {
         _id = id;
         _registers['p'] = id;
@@ -35,7 +30,7 @@ public class CPU2
         _instructions = instructions;
         _instructionPtr = 0;
     }
-    public CPU2 Run()
+    public void Run()
     {
         do
         {
@@ -66,26 +61,17 @@ public class CPU2
                     break;
                 case "rcv":
                     if (_incoming.Count > 0)
-                    {
                         _registers[register] = _incoming.Dequeue();
-                    }
                     else
-                    {
-                        return this;
-                    }
+                        return;
                     break;
                 case "jgz":
                     if (_registers[register] > 0)
-                    {
-                        offset = (int)value;
-                    }
+                        offset = (int) value;
                     break;
             }
 
             _instructionPtr += offset;
         } while (_instructionPtr >= 0 && _instructionPtr < _instructions.Count);
-        return this;
     }
-
-    public bool HasIncoming => _incoming.Count > 0;
 }

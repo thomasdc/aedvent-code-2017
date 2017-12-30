@@ -11,6 +11,7 @@ class Program
             var result = Spinlock.Find(input, 2017);
             return result.buffer[result.index + 1];
         });
+        Run(() => Spinlock.FindFast(input, 2017));
         Run(() => Spinlock.FindFast(input, 50_000_000));
     }
 

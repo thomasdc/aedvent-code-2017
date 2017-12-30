@@ -54,39 +54,48 @@ namespace ProgramTree
 
         public Node Find(Func<Node, bool> predicate)
         {
-            return AllNodes().FirstOrDefault(predicate);
+            return Nodes.Values.FirstOrDefault(predicate);
         }
         public Node Find(string label) => Nodes[label];
 
-        public IEnumerable<Node> AllNodes() => Nodes.Values;
+        public Node FindInvalidNode() => (
+            from n in Nodes.Values
+            where !n.HasValidWeight && n.Children.All(x => x.HasValidWeight)
+            from child in n.Children
+            group child by child.Weight
+            into g
+            where g.Count() == 1
+            select g.Single()
+        ).Single();
+
     };
     class Node
     {
         public readonly string Label;
-        private readonly int _weight;
-        public Node Parent => _parent;
+        public Node Parent { get; private set; }
+
         private readonly List<Node> _children = new List<Node>();
 
-        public int Weight => Traverse().Select(n => n._weight).Sum();
+        public int Weight => Traverse().Select(n => n.PrivateWeight).Sum();
 
         public override string ToString() => $"{Label} ({Weight})";
 
         public bool HasValidWeight => !Children.Any() || Children.Select(c => c.Weight).Distinct().Count() == 1;
 
-        private Node _parent;
         public Node(string label, int weight)
         {
             Label = label;
-            _weight = weight;
+            PrivateWeight = weight;
         }
 
         public void AddChild(Node child) => _children.Add(child);
 
         public IReadOnlyCollection<Node> Children => _children;
-        public int PrivateWeight => _weight;
+        public int PrivateWeight { get; }
+
         public IEnumerable<Node> Siblings => Parent.Children.Where(n => n.Label != Label);
 
-        public void SetParent(Node parent) => _parent = parent;
+        public void SetParent(Node parent) => Parent = parent;
 
         public IEnumerable<Node> Traverse()
         {
@@ -97,6 +106,7 @@ namespace ProgramTree
                     yield return node;
             }
         }
+        public int RebalancingWeight => PrivateWeight - (Weight - Siblings.First().Weight);
     }
     static class Ex
     {

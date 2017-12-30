@@ -1,43 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Plumber
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
             var edges = (
                 from line in File.ReadLines("input.txt")
                 let parts = line.Split("<->").Select(s => s.Trim()).ToArray()
-                let parent = int.Parse(parts[0])
-                from child in parts[1].Split(',').Select(int.Parse).ToArray()
-                select (parent: parent, child: child)
-            ).ToList();
+                let vertex1 = int.Parse(parts[0])
+                from vertex2 in parts[1].Split(',').Select(int.Parse)
+                select (vertex1: vertex1, vertex2: vertex2)
+            );
 
-            var lookup = edges.ToLookup(x => x.parent);
 
-            var counts = new Dictionary<int, HashSet<int>>();
-
-            foreach (var (parent, _) in edges)
-            {
-                if (counts.Any(h => h.Value.Contains(parent))) continue;
-                var values = new[] { parent };
-                var hash = new HashSet<int>();
-                counts[parent] = hash;
-                while (true)
-                {
-                    var parents = values.Where(n => !hash.Contains(n)).ToArray();
-                    if (!parents.Any()) break;
-                    foreach (var p in parents) hash.Add(p);
-                    values = parents.SelectMany(n => lookup[n]).Select(x => x.child).ToArray();
-                }
-            }
-
-            Console.WriteLine(counts[0].Count);
-            Console.WriteLine(counts.Count());
+            Run(() => new Graph(edges).Count(0));
+            Run(() => new Graph(edges).SubGraphs().Count);
+        }
+        static void Run<T>(Func<T> f)
+        {
+            var sw = Stopwatch.StartNew();
+            var result = f();
+            Console.WriteLine($"{result} - {sw.Elapsed}");
         }
 
     }

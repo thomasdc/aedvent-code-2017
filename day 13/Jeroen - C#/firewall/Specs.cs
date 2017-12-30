@@ -19,7 +19,6 @@ namespace firewall
         [Fact]
         public void Example()
         {
-
             Assert.Equal(24, Firewall.Severity(lines));
         }
 

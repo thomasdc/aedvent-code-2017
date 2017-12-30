@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -8,19 +10,17 @@ namespace Registers
     {
         static void Main(string[] args)
         {
-            var instructions = File.ReadLines("input.txt").Select(Instruction.Parse).ToList();
+            var instructions = File.ReadLines("input.txt").Select(Instruction.Parse).ToImmutableList();
 
-            var memory = instructions.Select(i => i.Register).Distinct().ToDictionary(s => s, _ => 0);
-            int m = int.MinValue;
-            foreach (var i in instructions)
-            {
-                var r = i.Apply(memory);
-                if (r > m) m = r;
-            }
+            Run(() => new Cpu(instructions).Run().MaxCurrentValue());
+            Run(() => new Cpu(instructions).Run().MaxValueEver());
+        }
 
-            Console.WriteLine(memory.Values.Max());
-            Console.WriteLine(m);
-
+        public static void Run<T>(Func<T> f)
+        {
+            var sw = Stopwatch.StartNew();
+            var result = f();
+            Console.WriteLine($"{result} - {sw.Elapsed}");
         }
     }
 }

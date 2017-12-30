@@ -14,14 +14,14 @@ namespace generator
                 .Take(take)
                 .Count(x => (x.a & 0xFFFFL) == (x.b & 0xFFFFL));
 
-        public static IEnumerable<long> A(long seed, int multipleOf = 1) => Sequence(seed, FactorA, Divisor).Where(i => i % multipleOf == 0);
-        public static IEnumerable<long> B(long seed, int multipleOf = 1) => Sequence(seed, FactorB, Divisor).Where(i => i % multipleOf == 0);
-        public static IEnumerable<long> Sequence(long input, long factor, long divisor)
+        public static IEnumerable<long> A(long seed, int multipleOf = 1) => Sequence(seed, FactorA).Where(i => i % multipleOf == 0);
+        public static IEnumerable<long> B(long seed, int multipleOf = 1) => Sequence(seed, FactorB).Where(i => i % multipleOf == 0);
+        public static IEnumerable<long> Sequence(long input, long factor)
         {
             var i = input;
             while (true)
             {
-                i = i * factor % divisor;
+                i = i * factor % Divisor;
                 yield return i;
             }
         }

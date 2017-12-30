@@ -1,22 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CPU1 
+public class CPU1
 {
     private readonly Dictionary<char, long> _registers
-        = "abcdefghijklmnopqrstuvwxyz".Select(c => (key: c,value: 0L))
+        = "abcdefghijklmnopqrstuvwxyz".Select(c => (key: c, value: 0L))
         .Concat("0123456789".Select(c => (key: c, value: long.Parse(c.ToString()))))
         .ToDictionary(x => x.key, x => x.value);
 
-    private long _lastplayed;
     private int _instructionPtr;
     private IReadOnlyList<string> _instructions;
-    
-    public long Run(IReadOnlyList<string> instructions)
+
+    public CPU1 Load(IReadOnlyList<string> instructions)
     {
         _instructions = instructions;
         _instructionPtr = 0;
+        return this;
+    }
 
+    public long Run()
+    {
+        long lastplayed = 0;
         do
         {
             var tokens = _instructions[_instructionPtr].Split(' ');
@@ -29,7 +33,7 @@ public class CPU1
             switch (instruction)
             {
                 case "snd":
-                    _lastplayed = _registers[register];
+                    lastplayed = _registers[register];
                     break;
                 case "set":
                     _registers[register] = value;
@@ -46,9 +50,9 @@ public class CPU1
                 case "rcv":
                     if (_registers[register] > 0)
                     {
-                        _registers[register] = _lastplayed;
+                        _registers[register] = lastplayed;
                     }
-                    return _lastplayed;
+                    return lastplayed;
                 case "jgz":
                     if (_registers[register] > 0)
                     {
@@ -58,9 +62,7 @@ public class CPU1
             }
             _instructionPtr += offset;
         } while (_instructionPtr >= 0 && _instructionPtr < _instructions.Count);
-        return _lastplayed;
+        return lastplayed;
     }
-
-    public long LastPlayed => _lastplayed;
 
 }

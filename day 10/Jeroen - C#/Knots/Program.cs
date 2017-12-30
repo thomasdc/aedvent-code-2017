@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace Knots
@@ -9,20 +10,15 @@ namespace Knots
         static void Main(string[] args)
         {
 
+            var input = "206,63,255,131,65,80,238,157,254,24,133,2,16,0,1,3";
             Run(() =>
             {
-                var input = new byte[] { 206, 63, 255, 131, 65, 80, 238, 157, 254, 24, 133, 2, 16, 0, 1, 3 };
-                var result = KnotsHash.Hash(input);
+                var result = KnotsHash.Hash(input.Split(',').Select(byte.Parse).ToArray());
                 var value = result[0] * result[1];
                 return value;
             });
 
-            Run(() =>
-            {
-                var input = "206,63,255,131,65,80,238,157,254,24,133,2,16,0,1,3";
-                var result = KnotsHash.Hash(input);
-                return result;
-            });
+            Run(() => KnotsHash.Hash(input));
 
         }
 

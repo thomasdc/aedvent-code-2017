@@ -16,29 +16,20 @@ namespace hexgrid
                     Max(tuple.max, tuple.coordinate.Items().Max(Abs))
                 )
             );
-
-            var coordinate = aggregate.coordinate;
-
-            var distance = coordinate.Items().Max(Abs);
-
-            return (distance, aggregate.max);
+            var (coordinate, max) = aggregate;
+            return (coordinate.Items().Max(Abs), max);
         }
         private static (int x, int y, int z) Step((int x, int y, int z) coordinate, string step)
         {
+            var (x, y, z) = coordinate;
             switch (step)
             {
-                case "n":
-                    return (coordinate.x, coordinate.y + 1, coordinate.z - 1);
-                case "nw":
-                    return (coordinate.x - 1, coordinate.y + 1, coordinate.z);
-                case "ne":
-                    return (coordinate.x + 1, coordinate.y, coordinate.z - 1);
-                case "s":
-                    return (coordinate.x, coordinate.y - 1, coordinate.z + 1);
-                case "sw":
-                    return (coordinate.x - 1, coordinate.y, coordinate.z + 1);
-                case "se":
-                    return (coordinate.x + 1, coordinate.y - 1, coordinate.z);
+                case "n": return (x, y + 1, z - 1);
+                case "nw": return (x - 1, y + 1, z);
+                case "ne": return (x + 1, y, z - 1);
+                case "s": return (x, y - 1, z + 1);
+                case "sw": return (x - 1, y, z + 1);
+                case "se": return (x + 1, y - 1, z);
                 default:
                     throw new InvalidOperationException();
             }

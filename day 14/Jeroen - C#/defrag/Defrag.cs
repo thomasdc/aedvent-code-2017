@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Knots;
+using static System.Linq.Enumerable;
 
 namespace defrag
 {
@@ -20,16 +21,16 @@ namespace defrag
             return count;
         }
 
+        static readonly int[] offsets = { 0, 8, 16, 24 };
+        private static IEnumerable<int> _0_to_127 = Range(0, 128).ToArray();
+
         public static int CountBitsInGrid(string key)
         {
             return (
-                from i in Enumerable.Range(0, 128)
-                let input = $"{key}-{i}"
-                let hash = KnotsHash.Hash(input)
-                from j in Enumerable.Range(0, 4)
-                let offset = j * 8
-                let value = Convert.ToUInt32($"0x{hash.Substring(offset, 8)}", 16)
-                select CountBits(value)
+                from i in _0_to_127
+                let hash = KnotsHash.Hash($"{key}-{i}")
+                from offset in offsets
+                select CountBits(Convert.ToUInt32($"0x{hash.Substring(offset, 8)}", 16))
             ).Sum();
         }
 
@@ -37,43 +38,39 @@ namespace defrag
         {
             var grid = new bool[128, 128];
 
-            var rows =
-                from i in Enumerable.Range(0, 128)
-                let input = $"{key}-{i}"
-                select (i:i, row: KnotsHash.Hash(input).ToBinary());
+            var rows = _0_to_127.Select(i => (i:i, row: KnotsHash.Hash($"{key}-{i}").ToBinary()));
 
             foreach ((int row, string hash) in rows)
-            {
-                foreach (var col in Enumerable.Range(0, 128))
-                    grid[row, col] = hash[col] == '1';
-            }
+            foreach (var col in _0_to_127)
+                grid[row, col] = hash[col] == '1';
+
+            var positions = 
+                from pos in AllPositions(128, 128)
+                where grid[pos.x, pos.y]
+                select pos;
 
             var count = 0;
-
-            for (var x = grid.GetLowerBound(0); x <= grid.GetUpperBound(0); x++)
-            for (var y = grid.GetLowerBound(1); y <= grid.GetUpperBound(1); y++)
+            foreach (var (x, y) in positions)
             {
-                if (grid[x, y])
-                {
-                    ClearGroup(x, y, grid);
-                    count++;
-                }
+                ClearGroup(x, y, grid);
+                count++;
             }
 
             return count;
         }
 
-
         private static void ClearGroup(int x, int y, bool[,] diskBits)
         {
             diskBits[x, y] = false;
 
-            foreach (var t in GetNeighbors(x,y))
+            var toclear = 
+                from t in GetNeighbors(x, y)
+                where t.x >= 0 && t.x < 128 && t.y >= 0 && t.y < 128 && diskBits[t.x, t.y]
+                select t;
+
+            foreach (var t in toclear)
             {
-                if (t.x >= 0 && t.x < 128 && t.y >= 0 && t.y < 128 && diskBits[t.x, t.y])
-                {
-                    ClearGroup(t.x, t.y, diskBits);
-                }
+                ClearGroup(t.x, t.y, diskBits);
             }
         }
 
@@ -83,6 +80,16 @@ namespace defrag
             yield return (x + 1, y);
             yield return (x, y - 1);
             yield return (x, y + 1);
+        }
+
+        static IEnumerable<(int x, int y)> AllPositions(int max1, int max2)
+        {
+            for (var x = 0; x < 128; x++)
+            for (var y = 0; y < 128; y++)
+            {
+                yield return (x, y);
+            }
+
         }
     }
 

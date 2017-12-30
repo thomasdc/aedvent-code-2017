@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Garbage
 {
-    public struct State
+    struct State
     {
         public readonly int Groups;
         public readonly int NestingLevel;
@@ -25,7 +25,7 @@ namespace Garbage
 
     }
 
-    public class GarbageProcessor
+    class GarbageProcessor
     {
         private Func<char, State, State> _process;
 
@@ -67,6 +67,13 @@ namespace Garbage
 
         public State Process(string input) => Process(new StringReader(input));
 
+        public State ProcessFile(string file)
+        {
+            using (var reader = new StreamReader("input.txt"))
+            {
+                return Process(reader);
+            }
+        }
         public State Process(TextReader reader)
         {
             _process = Counting;

@@ -10,7 +10,7 @@ namespace firewall
     {
         static void Main(string[] args)
         {
-            var items =(
+            var items = (
                 from line in File.ReadLines("input.txt")
                 let indexes = line.Split(": ").Select(int.Parse).ToArray()
                 select (layer: indexes[0], range: indexes[1])

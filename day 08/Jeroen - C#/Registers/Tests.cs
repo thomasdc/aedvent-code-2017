@@ -1,79 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using Xunit;
 
 namespace Registers
 {
-
-    struct Instruction
-    {
-        internal static Regex r = new Regex(
-            @"^(?<register>[a-z]+) (?<operation>inc|dec) (?<amount>-{0,1}\d+) if (?<testregister>[a-z]+) (?<operator>[<>=!]{1,2}) (?<comparisonValue>-{0,1}[\d]+)", RegexOptions.Compiled);
-
-        public static Instruction Parse(string input)
-        {
-            var match = r.Match(input);
-            return new Instruction(
-                match.Groups["register"].Value,
-                ParseOperation(match.Groups["register"].Value, match.Groups["operation"].Value, int.Parse(match.Groups["amount"].Value)),
-                ParsePredicate(match.Groups["testregister"].Value, match.Groups["operator"].Value, match.Groups["comparisonValue"].Value)
-                );
-        }
-
-        private static Func<IDictionary<string,int>, bool> ParsePredicate(string s, string comparisonOperator, string value)
-        {
-            int i = int.Parse(value);
-            switch (comparisonOperator)
-            {
-                case "<":
-                    return d => d[s] < i;
-                case "<=":
-                    return d => d[s] <= i;
-                case ">":
-                    return d => d[s] > i;
-                case ">=":
-                    return d => d[s] >= i;
-                case "==":
-                    return d => d[s] == i;
-                case "!=":
-                    return d => d[s] != i;
-            }
-            throw new ArgumentException(nameof(comparisonOperator));
-        }
-
-        private static Action<IDictionary<string, int>> ParseOperation(string s, string operation, int amount)
-        {
-            switch (operation)
-            {
-                case "dec": return d => d[s] -= amount;
-                case "inc": return d => d[s] += amount;
-            }
-            throw new ArgumentException();
-        }
-
-        public readonly string Register;
-        public readonly Action<IDictionary<string,int>> Action;
-        public readonly Func<IDictionary<string, int>, bool> Predicate;
-        public Instruction(string register, Action<IDictionary<string,int>> action, Func<IDictionary<string, int>, bool> predicate)
-        {
-            Register = register;
-            Action = action;
-            Predicate = predicate;
-        }
-
-        public int Apply(IDictionary<string, int> dictionary)
-        {
-            if (Predicate(dictionary))
-                Action(dictionary);
-            return dictionary[Register];
-        }
-    }
-
     public class Tests
     {
         // if (?<testregister>) (?<comparison>[<>=!]{1,2}) (?<comparisonValue>)
@@ -119,13 +53,10 @@ a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10";
 
-            var instructions = ReadLines(sample).Select(Instruction.Parse).ToList();
+            var instructions = ReadLines(sample).Select(Instruction.Parse).ToImmutableList();
+            var cpu = new Cpu(instructions).Run();
 
-            var registers = instructions.Select(i => i.Register).Distinct().ToDictionary(s => s, s => 0);
-
-            foreach (var instruction in instructions)
-                instruction.Apply(registers);
-            Assert.Equal(1, registers.Values.Max());
+            Assert.Equal(1, cpu.MaxCurrentValue());
 
         }
 

@@ -10,6 +10,12 @@ class ExpandingGrid
         _grid = grid;
     }
 
+    public ExpandingGrid Expand(Rule[] rules, int times)
+    {
+        var g = this;
+        for (int i = 0; i < times; i++) g = g.Expand(rules);
+        return g;
+    }
     public ExpandingGrid Expand(Rule[] rules)
     {
         var inputSize = _grid.GetUpperBound(0) + 1;

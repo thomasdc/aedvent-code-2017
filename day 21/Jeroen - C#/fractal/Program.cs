@@ -7,31 +7,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        Run(() =>
-        {
-            var rules = File.ReadLines("input.txt").Select(Rule.Parse).ToArray();
-            var input = ".#.\r\n..#\r\n###".ReadLines().ToRectangular();
-            var expandingGrid = new ExpandingGrid(input);
-            for (int i = 0; i < 5; i++)
-            {
-                expandingGrid = expandingGrid.Expand(rules);
-            }
-            Console.WriteLine(expandingGrid);
-
-            return expandingGrid.Count('#');
-        });
-
-        Run(() =>
-        {
-            var rules = File.ReadLines("input.txt").Select(Rule.Parse).ToArray();
-            var input = ".#.\r\n..#\r\n###".ReadLines().ToRectangular();
-            var expandingGrid = new ExpandingGrid(input);
-            for (int i = 0; i < 18; i++)
-            {
-                expandingGrid = expandingGrid.Expand(rules);
-            }
-            return expandingGrid.Count('#');
-        });
+        var rules = File.ReadLines("input.txt").Select(Rule.Parse).ToArray();
+        var input = ".#.\r\n..#\r\n###".ReadLines().ToRectangular();
+        Run(() => new ExpandingGrid(input).Expand(rules, 5).Count('#'));
+        Run(() => new ExpandingGrid(input).Expand(rules, 18).Count('#'));
 
     }
 

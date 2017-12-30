@@ -8,13 +8,6 @@ namespace defrag
     {
         static void Main(string[] args)
         {
-
-            int x = 0b10;
-
-            Console.WriteLine(Convert.ToString(x, 2).PadLeft(9, '0'));
-            Console.WriteLine(Convert.ToString(x << 1, 2).PadLeft(9, '0'));
-            Console.WriteLine(Convert.ToString(x >> 1, 2).PadLeft(9, '0'));
-
             string key = "hxtvlmkl";
             Run(() => Defrag.CountBitsInGrid(key));
             Run(() => Defrag.CountRegions(key));
