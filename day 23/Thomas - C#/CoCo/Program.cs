@@ -9,8 +9,44 @@ namespace CoCo
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Part1());
+            Console.WriteLine(Part2());
             Console.ReadLine();
+        }
+
+        private static int Part2()
+        {
+            var b = 109900;
+            const int c = 126900;
+            var h = 0;
+            
+            do
+            {
+                var f = true;
+                for (var d = 2; d < b; d++)
+                {
+                    if (b % d == 0)
+                    {
+                        // f = "b is not a prime since it's can by divided by d"
+                        f = false;
+                        break;
+                    }
+                }
+
+                if (!f)
+                {
+                    // h = "no prime" counter
+                    h++;
+                }
+
+                if (b == c)
+                {
+                    break;
+                }
+
+                b += 17;
+            } while (true); // 1000 loops: (126900-109900)/17
+
+            return h;
         }
 
         private static int Part1()
