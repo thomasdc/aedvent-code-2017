@@ -10,7 +10,21 @@ namespace Swarm
         static void Main(string[] args)
         {
             var particles = Parse(File.ReadAllLines("input.txt")).ToList();
-            Part1(particles);
+            Part2(particles);
+        }
+
+        private static void Part2(IList<Particle> particles)
+        {
+            while (true)
+            {
+                foreach (var particle in particles)
+                {
+                    particle.Tick();
+                }
+
+                particles = particles.Where(particle => !particles.Where(_ => _ != particle).Any(particle.SamePosition)).ToList();
+                Console.WriteLine(particles.Count);
+            }
         }
 
         private static void Part1(IList<Particle> particles)
@@ -68,6 +82,13 @@ namespace Swarm
                 Position.x += Velocity.x;
                 Position.y += Velocity.y;
                 Position.z += Velocity.z;
+            }
+
+            public bool SamePosition(Particle otherParticle)
+            {
+                return Position.x == otherParticle.Position.x && 
+                       Position.y == otherParticle.Position.y &&
+                       Position.z == otherParticle.Position.z;
             }
 
             public long DistanceFromCenter()
