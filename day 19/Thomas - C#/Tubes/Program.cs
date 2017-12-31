@@ -9,20 +9,22 @@ namespace Tubes
         static void Main(string[] args)
         {
             var (grid, startingLocation) = Parse(File.ReadAllLines("input.txt"));
-            Console.WriteLine(Part1(grid, startingLocation));
+            Console.WriteLine(Explore(grid, startingLocation));
             Console.ReadLine();
         }
 
-        private static string Part1(char[,] grid, (int x, int y) startingLocation)
+        private static (string collectedLetters, int numberOfSteps) Explore(char[,] grid, (int x, int y) startingLocation)
         {
             var packet = new Packet(startingLocation);
             var moving = true;
+            var numberOfSteps = 0;
             while (moving)
             {
                 moving = packet.Move(grid);
+                numberOfSteps++;
             }
 
-            return string.Join("", packet.CollectedLetters);
+            return (string.Join("", packet.CollectedLetters), numberOfSteps-1);
         }
 
         private static (char[,] grid, (int x, int y) startingLocation) Parse(string[] input)
